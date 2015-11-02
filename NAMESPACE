@@ -2,6 +2,7 @@
 export(expvar)
 export(expsize)
 export(optsize)
+export(s2)
 
 import(data.table)
 

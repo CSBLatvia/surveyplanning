@@ -1,57 +1,62 @@
 \name{optsize}
 \alias{optsize}
 
-\title{Optimal sample size for variables of interest.}
+\title{Optimal sample size allocation}
 
 \description{
-  The function computes optimal sample size for variables of interest.
+The function computes optimal sample size allocation over strata.
 }
 
 \usage{
-optsize(H, s2h, n, poph, Rh, dataset = NULL)
+optsize(H, n, poph, s2h = NULL, Rh = NULL, dataset = NULL)
 }
 
 \arguments{
-\item{H}{The stratum variable. One dimensional object convertible to one-column \code{data.table} or variable name as character, column number or logical vector with only one \code{TRUE} value (length of the vector has to be the same as the column count of \code{dataset}).}
 
-\item{s2h}{The estimated s2 for variables of interest. Object convertible to \code{data.table} or variable name as character, column number or logical vector with only one \code{TRUE} value (length of the vector has to be the same as the column count of \code{dataset}).}
+\item{H}{The stratum variable. One dimensional object convertible to one-column \code{data.table}, variable name as character, or column number.}
 
-\item{n}{Total sample size. One dimensional object convertible to one-column \code{data.table} or variable name as character, column number or logical vector with only one  \code{TRUE} value (length of the vector has to be the same as the column count of \code{dataset}).}
+\item{n}{Total sample size. One dimensional object with length one.}
 
-\item{poph}{Population size. One dimensional object convertible to one-column \code{data.table} or variable name as character, column number or logical vector with only one \code{TRUE} value (length of the vector has to be the same as the column count of \code{dataset}).}
+\item{poph}{Population size in each stratum. One dimensional object convertible to one-column \code{data.table}, variable name as character, or column number.}
 
-\item{Rh}{Response rate. Object convertible to one-column \code{data.table} or variable name as character, column number or logical vector with only one \code{TRUE} value (length of the vector has to be the same as the column count of \code{dataset}).}
+\item{s2h}{The expected population variance \eqn{S^2} for variables of interest in each stratum (optional). If not defined, it is assumed to be 1 in each stratum. Object convertible to \code{data.table}, variable name as character vector, or column numbers.}
 
-\item{dataset}{Optional survey data object convertible to \code{data.table}.}
+\item{Rh}{The expected response rate in each stratum (optional). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.}
 
+\item{dataset}{Optional survey data object convertible to \code{data.table} with one row for each stratum.}
+}
+
+\details{
+If \code{s2h} and \code{Rh} is not defined, the sample allocation will be calculated as proportional allocation (proportional to the population size).
+
+If \code{Rh} is not defined, the sample allocation will be calculated as Neyman allocation.
+
+}
+
+\value{
+
+  An object as \code{data.table}, with variables:
+
+       \code{H} - stratum, \cr
+       \code{variable} - the name of variable for population variance \eqn{S^2}, \cr
+       \code{s2h} - population variance \eqn{S^2}, \cr
+       \code{Rh} - response rate, \cr
+       \code{poph} - population size, \cr
+       \code{nh} - sample size.
 }
 
 \seealso{\code{\link{expsize}}, \code{\link{optsize}}}
 
-\value{
-
-  A \code{data.table} is returned by the function, which containing variables:
-
-       \code{H} - the stratum, \cr
-       \code{variable} - the names of variables of interest, \cr
-       \code{s2h} - the estimated s2, \cr
-       \code{Rh} - response rate, \cr
-       \code{poph} - the population size, \cr
-       \code{pnh} - the corrected population size, \cr
-       \code{nh} - the sample size.
-}
-
 \examples{
 
-data <- data.table(H=1:3, Yh=10*1:3, Yh1=10*4:6,
+data <- data.table(H=1:3,
                    s2h=10*runif(3), s2h2=10*runif(3),
-                   poph=8*1:3, Rh=rep(1,3),  dd=c(1,1,1))
-                   
-vars <- optsize(H="H", s2h=c("s2h", "s2h2"), 
+                   poph=8*1:3, Rh=rep(1,3), dd=c(1,1,1))
+
+vars <- optsize(H="H", s2h=c("s2h", "s2h2"),
                 n=10, poph="poph",
                 Rh="Rh", dataset = data)
 vars
-
 }
- 
+
 \keyword{surveyplanning}

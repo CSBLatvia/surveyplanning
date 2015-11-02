@@ -3,30 +3,31 @@
 \alias{surveyplanning}
 \docType{package}
 \title{
-Survey Planning tools
+Survey Planning Tools
 }
 \description{
-    Expexted size for sample, 
-    expexted variance for variables of interest,
-    optimal sample size for variables of interest.
+Tools for sample survey planing, including sample size calculation,
+estimation of expected precision for the estimates of totals, and
+calculation of optimal sample size allocation.
 }
 \details{
 \tabular{ll}{
 Package: \tab surveyplanning\cr
-Version: \tab 0.1\cr
-Date: \tab 2015-10-29\cr
+Version: \tab 0.2\cr
+Date: \tab 2015-11-02\cr
 Depends: \tab R (>= 3.0.0), data.table (>= 1.9.6), laeken, stringr\cr
 License: \tab GPL (>= 2)\cr
-URL: \tab https://github.com/CSBLatvia/vardpoor/ \cr
-BugReports: \tab https://github.com/CSBLatvia/vardpoor/issues/ \cr
+URL: \tab https://github.com/CSBLatvia/surveyplanning/ \cr
+BugReports: \tab https://github.com/CSBLatvia/surveyplanning/issues/ \cr
 }
 
 Index:
 \preformatted{
-expsize	Expexted size for sample
-expvar	Expexted variance for variables of interest
-optsize	Optimal sample size for variables of interest
-surveyplanning-package      Survey Planning tools
+expsize                 Sample size calculation
+expvar                  Expected precision for the estimates of totals
+optsize                 Optimal sample size allocation
+s2                      Population variance estimation
+surveyplanning-package  Survey Planning Tools
 
 }
 }
