@@ -1,0 +1,7 @@
+### Exports
+export(expvar)
+export(expsize)
+export(optsize)
+
+import(data.table)
+
