@@ -14,8 +14,8 @@ calculation of optimal sample size allocation.
 \tabular{ll}{
 Package: \tab surveyplanning\cr
 Version: \tab 0.2\cr
-Date: \tab 2015-11-02\cr
-Depends: \tab R (>= 3.0.0), data.table (>= 1.9.6), laeken, stringr\cr
+Date: \tab 2015-11-03\cr
+Depends: \tab R (>= 3.0.0), data.table (>= 1.9.6) \cr
 License: \tab GPL (>= 2)\cr
 URL: \tab https://github.com/CSBLatvia/surveyplanning/ \cr
 BugReports: \tab https://github.com/CSBLatvia/surveyplanning/issues/ \cr
@@ -33,8 +33,9 @@ surveyplanning-package  Survey Planning Tools
 }
 \author{
 Juris Breidaks [aut, cre],
- Janis Jukams [aut]
+Martins Liberts [aut],
+Janis Jukams [aut]
 
-Maintainer: Juris Breidaks <Juris.Breidaks@csb.gov.lv>
+Maintainer: Juris Breidaks <rcsb@csb.gov.lv>
 }
 \keyword{ package }

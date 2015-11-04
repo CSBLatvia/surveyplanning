@@ -2,13 +2,11 @@ Package: surveyplanning
 Type: Package
 Title: Survey Planning Tools
 Version: 0.2
-Date: 2015-11-02
+Date: 2015-11-03
 Depends: R (>= 3.0.0), data.table (>= 1.9.6)
-Authors@R: c(person("Juris", "Breidaks", email = "Juris.Breidaks@csb.gov.lv",
-        role = c("aut", "cre")), person("Janis", "Jukams", role = "aut"))
-Author: Juris Breidaks [aut, cre], Janis Jukams [aut]
-Maintainer: Juris Breidaks <Juris.Breidaks@csb.gov.lv>
-Description: Expexted size for sample, expexted variance for variables of interest, optimal sample size for variables of interest.
+Authors@R: c(person("Juris", "Breidaks", email = "rcsb@csb.gov.lv",  role = c("aut", "cre")), person("Martins", "Liberts", role = "aut"), person("Janis", "Jukams", role = "aut"))
+Maintainer: Juris Breidaks <rcsb@csb.gov.lv>
+Description: Tools for sample survey planing, including sample size calculation, estimation of expected precision for the estimates of totals, and calculation of optimal sample size allocation.
 License: GPL (>= 2)
 Encoding: latin1
 Repository: CRAN
