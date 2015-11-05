@@ -73,7 +73,7 @@ optsize <- function(H, n, poph, s2h = NULL, Rh = NULL, dataset = NULL) {
   setkeyv(resulth, c(names(H)))
   resulth <- merge(s2h, resulth, all=TRUE)
 
-  resulth[, pnh := poph * s2h / sqrt(Rh)]
+  resulth[, pnh := poph * sqrt(s2h / Rh)]
   resulth[, nh := n * pnh / sum(pnh), by = "variable"]
   resulth[, pnh:=NULL]
   return(resulth)
