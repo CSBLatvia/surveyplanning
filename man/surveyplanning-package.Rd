@@ -6,7 +6,7 @@
 Survey Planning Tools
 }
 \description{
-Tools for sample survey planing, including sample size calculation,
+Tools for sample survey planning, including sample size calculation,
 estimation of expected precision for the estimates of totals, and
 calculation of optimal sample size allocation.
 }

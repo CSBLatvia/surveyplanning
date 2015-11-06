@@ -2,6 +2,7 @@
 export(expvar)
 export(expsize)
 export(optsize)
+export(dom_optimal_allocation)
 export(s2)
 
 import(data.table)
