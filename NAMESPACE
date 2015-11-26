@@ -6,6 +6,4 @@ export(dom_optimal_allocation)
 export(s2)
 
 import(data.table)
-
 importFrom("stats", "var")
-importFrom("data.table", ".")

@@ -9,11 +9,13 @@ The function computes expexted precision as variance, standard error, and coeffi
 }
 
 \usage{
-expvar(Yh, H, s2h, nh, poph, Rh = NULL, deffh = NULL, Dom = NULL, dataset = NULL)
+expvar(Yh, Zh=NULL, H, s2h, nh, poph, Rh = NULL, deffh = NULL, Dom = NULL, dataset = NULL)
 }
 
 \arguments{
 \item{Yh}{The expected totals for variables of interest in each stratum. Object convertible to \code{data.table}, variable names as character vector, or column numbers.}
+
+\item{Zh}{Optional variables of denominator for the expected ratio estimation in each stratum. Object convertible to \code{data.table}, variable names as character vector, or column numbers.}
 
 \item{H}{The stratum variable. One dimensional object convertible to one-column \code{data.table}, variable name as character, or column number.}
 
@@ -33,11 +35,12 @@ expvar(Yh, H, s2h, nh, poph, Rh = NULL, deffh = NULL, Dom = NULL, dataset = NULL
 }
 
 \value{
-  A list with two data objects:
+  A list with three data objects:
 
   \item{resultH}{An object as \code{data.table}, with variables: \cr
     \code{H} - stratum, \cr
-    \code{variable} - the name of variable of interest, \cr
+    \code{variableY} - the name of variable of interest, \cr
+    \code{variableZ} - the name of optional variable of denominator for the expected ratio estimation, \cr
     \code{estim} - total value, \cr
     \code{deffh} - design effect, \cr
     \code{s2h} - population variance \eqn{S^2}, \cr
@@ -49,9 +52,21 @@ expvar(Yh, H, s2h, nh, poph, Rh = NULL, deffh = NULL, Dom = NULL, dataset = NULL
     \code{se} - expected standard error, \cr
     \code{cv} - expected coeficient of variance.}
 
-  \item{result}{An object as \code{data.table}, with variables: \cr
+  \item{resultDom}{An object as \code{data.table}, with variables: \cr
     \code{Dom} - domain, \cr
-    \code{variable} - the name of variable of interest, \cr
+    \code{variableY} - the name of variable of interest, \cr
+    \code{variableZ} - the name of optional variable of denominator for the expected ratio estimation, \cr
+    \code{poph} - the population size, \cr
+    \code{nh} - sample size, \cr
+    \code{nrh} - expected number of respondents, \cr
+    \code{estim} - total value, \cr
+    \code{var} - the expected variance, \cr
+    \code{se} - the expected standart error, \cr
+    \code{cv} - the expected coeficient of variance.}
+
+  \item{result}{An object as \code{data.table}, with variables: \cr
+    \code{variableY} - the name of variable of interest, \cr
+    \code{variableZ} - the name of optional variable of denominator for the expected ratio estimation, \cr
     \code{poph} - the population size, \cr
     \code{nh} - sample size, \cr
     \code{nrh} - expected number of respondents, \cr

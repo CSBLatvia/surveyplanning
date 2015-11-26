@@ -1,5 +1,6 @@
-expvar <- function(Yh, H, s2h, nh, poph, Rh = NULL, deffh = NULL, Dom = NULL,
-                   dataset = NULL) {
+expvar <- function(Yh, Zh=NULL, H, s2h, nh, poph, 
+                               Rh = NULL, deffh = NULL, Dom = NULL,
+                               dataset = NULL) {
 
   if(!is.null(dataset)) {
       dataset <- data.table(dataset)
@@ -9,6 +10,10 @@ expvar <- function(Yh, H, s2h, nh, poph, Rh = NULL, deffh = NULL, Dom = NULL,
       if(!is.null(H)) {
           if (min(H %in% names(dataset))!=1) stop("'H' does not exist in 'dataset'!")
           if (min(H %in% names(dataset))==1) H <- dataset[, H, with=FALSE] }
+      if(!is.null(Zh)) {
+          if (min(Zh %in% names(dataset))!=1) stop("'Zh' does not exist in 'dataset'!")
+          if (min(Zh %in% names(dataset))==1) Zh <- dataset[, Zh, with=FALSE] }
+
       if(!is.null(s2h)) {
           if (min(s2h %in% names(dataset))!=1) stop("'s2h' does not exist in 'dataset'!")
           if (min(s2h %in% names(dataset))==1) s2h <- dataset[, s2h, with=FALSE]      }
@@ -77,6 +82,15 @@ expvar <- function(Yh, H, s2h, nh, poph, Rh = NULL, deffh = NULL, Dom = NULL,
   if (!is.numeric(Rh)) stop("'Rh' must be numerical")
   if (any(is.na(Rh))) stop("'Rh' has unknown values")
 
+  if (!is.null(Zh)) {
+    Zh <- data.table(Zh, check.names=TRUE)
+    if (nrow(Zh) != n) stop("'Zh' length must be equal with 'Yh' row count")
+    if (ncol(Zh) != m) stop("'Zh' and 'Yh' must be equal column count")
+    if (any(is.na(Zh))) stop("'Zh' has unknown values")
+    if (!all(sapply(Zh, is.numeric))) stop("'Zh' must be numeric values")
+    if (is.null(names(Zh))) stop("'Zh' must be colnames")
+   }
+
   if (!is.null(deffh)) {
     deffh <- data.table(deffh, check.names=TRUE)
     if (nrow(deffh) != n) stop("'deffh' length must be equal with 'Yh' row count")
@@ -100,62 +114,80 @@ expvar <- function(Yh, H, s2h, nh, poph, Rh = NULL, deffh = NULL, Dom = NULL,
 
   variable <- nrh <- se <- cv <- estim <- NULL
 
-  nh <- data.table(melt(data.table(H, nh), id=c(names(H))))
+  domH <- H
+  if (!is.null(Dom)) domH <- data.table(Dom, domH)
+
+  nh <- data.table(melt(data.table(domH, nh), id=c(names(domH))))
   nh[, variable:=NULL]
   setnames(nh, "value", "nh")
-  setkeyv(nh, names(H))
 
-  Rh <- data.table(melt(data.table(H, Rh), id=c(names(H))))
+  Rh <- data.table(melt(data.table(domH, Rh), id=c(names(domH))))
   Rh[, variable:=NULL]
   setnames(Rh, "value", "Rh")
-  setkeyv(Rh, names(H))
-  resulth <- merge(nh, Rh, all=TRUE)
+  resulth <- merge(nh, Rh, all=TRUE, by=names(domH))
 
-  poph <- data.table(melt(data.table(H, poph), id=c(names(H))))
+  poph <- data.table(melt(data.table(domH, poph), id=c(names(domH))))
   poph[, variable:=NULL]
   setnames(poph, "value", "poph")
-  setkeyv(poph, names(H))
-
-  resulth <- merge(resulth, poph, all=TRUE)
+  resulth <- merge(resulth, poph, all=TRUE, by=names(domH))
 
   setnames(s2h, names(s2h), names(Yh))
-  s2h <- data.table(melt(data.table(H, s2h), id=c(names(H))))
-  setnames(s2h, "value", "s2h")
-  setkeyv(s2h, c(names(H), "variable"))
-  resulth <- merge(s2h, resulth, all=TRUE)
-  setkeyv(resulth, c(names(H), "variable"))
+  s2h <- data.table(melt(data.table(domH, s2h), id=c(names(domH))))
+  setnames(s2h, c("variable", "value"), c("variableY", "s2h"))
+  resulth <- merge(s2h, resulth, all=TRUE, by=c(names(domH)))
 
   if (!is.null(deffh)) {
       setnames(deffh, names(deffh), names(Yh))
-      deffh <- data.table(melt(data.table(H, deffh), id=c(names(H))))
-      setnames(deffh, "value", "deffh")
-      setkeyv(deffh, c(names(H), "variable"))
-      resulth <- merge(deffh, resulth, all=TRUE)
+      deffh <- data.table(melt(data.table(domH, deffh), id=c(names(domH))))
+      setnames(deffh, c("variable", "value"), c("variableY", "deffh"))
+      resulth <- merge(deffh, resulth, all=TRUE, by=c(names(domH), "variableY"))
   }
 
   if (is.null(deffh)) resulth[, deffh:=1]
 
-  domH <- H
-  if (!is.null(Dom)) domH <- data.table(Dom, domH)
+  if (!is.null(Zh)) {
+      parYZh <- data.table(variableY=names(Yh), variableZ=names(Zh))
+      Zh <- data.table(melt(data.table(domH, Zh), id=c(names(domH))))
+      setnames(Zh, c("variable", "value"), c("variableZ", "Zh"))
+      Zh <- merge(Zh, parYZh, all.x=TRUE, by="variableZ")
+
+      resulth <- merge(Zh, resulth, all=TRUE, by=c(names(domH), "variableY"))
+  }
+
   Yh <- data.table(melt(data.table(domH, Yh), id=c(names(domH))))
-  setnames(Yh, "value", "estim")
-  setkeyv(Yh, c(names(H), "variable"))
-  resulth <- merge(Yh, resulth, all=TRUE)
+  setnames(Yh, c("variable", "value"), c("variableY", "Yh"))
+  resulth <- merge(Yh, resulth, all=TRUE, by=c(names(domH), "variableY"))
+
+  if (!is.null(resulth$Zh)) { resulth[, estim:=Yh/Zh]
+    } else resulth[, estim:=Yh]
 
   resulth[, nrh := round(nh * Rh)]
   resulth[nrh < 1, nrh:=1]
   resulth[, var := poph ^ 2 * (1 - nrh / poph) / nrh * s2h * deffh]
   resulth[!is.nan(var), se:=sqrt(var)]
   resulth[is.nan(var) | is.na(var), se := NA]
-  resulth[, cv := 100 * se / estim]
+  resulth[, cv := ifelse(estim!=0, 100 * se / estim, NA)]
 
-  domH <- "variable"
-  if (!is.null(Dom)) domH <- c(names(Dom), domH)
-  result <- resulth[, lapply(.SD, sum, na.rm = TRUE), keyby = domH,
-                    .SDcols = c("poph", "nh", "nrh", "estim", "var")]
+  vars <- names(resulth)[names(resulth) %in% c("Yh","Zh")]
+  vals <- names(resulth)[names(resulth) %in% c("variableY",
+                                               "variableZ")]
+  resultDom <- resulth[, lapply(.SD, sum, na.rm = TRUE),
+                         keyby = c(names(Dom), vals),
+                       .SDcols = c(vars, estim, "poph", 
+                                  "nh", "nrh",  "var")]
+  if (!is.null(resultDom$Zh)) { resultDom[, estim:=Yh/Zh]
+    } else resultDom[, estim:=Yh]
+  resultDom[, se := sqrt(var)]
+  resultDom[, cv := ifelse(estim!=0, 100 * se / estim, NA)]
+
+  result <-  resultDom[, lapply(.SD, sum, na.rm = TRUE), keyby = vals,
+                    .SDcols = c(vars, "poph", "nh", "nrh", "var")]
+  if (!is.null(result$Zh)) { result[, estim:=Yh/Zh]
+    } else result[, estim:=Yh]
   result[, se := sqrt(var)]
-  result[, cv := 100 * se / estim]
-
-  list(resultH = resulth,
-       result = result)
+  result[, cv := ifelse(estim!=0, 100 * se / estim, NA)]
+  
+  list(resultDomH = resulth,
+        resultDom = resultDom,
+         result=result)
 }

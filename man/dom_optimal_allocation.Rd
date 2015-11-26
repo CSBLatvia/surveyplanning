@@ -8,10 +8,10 @@ The function computes optimal sample size allocation over strata and domain for 
 }
 
 \usage{
-dom_optimal_allocation(id, Dom, H, Y, indicator, 
-                                         sup_w, sup_cv, min_size=3,
-                                         correction_before=FALSE,
-                                         dataset=NULL)
+dom_optimal_allocation(id, Dom, H, Y, Rh=NULL,
+                                        indicator, sup_w, sup_cv,
+                                        min_size=3, correction_before=FALSE,
+                                        dataset=NULL)
 }
 
 \arguments{
@@ -23,6 +23,8 @@ dom_optimal_allocation(id, Dom, H, Y, indicator,
 \item{H}{The unit stratum variable. One dimensional object convertible to one-column \code{data.table} or variable name as character, column number.}
 
 \item{Y}{Variable of interest. Object convertible to \code{data.table} or variable names as character, column numbers.}
+
+\item{Rh}{The expected response rate in each stratum (optional). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.}
 
 \item{indicator}{Variable for detection fully surveyed units. Object convertible to \code{data.table} or variable names as character, column numbers.}
 
@@ -47,6 +49,7 @@ dom_optimal_allocation(id, Dom, H, Y, indicator,
         \code{Dom} - optional variables used to define population domains, \cr
         \code{H} - the unit stratum variable, \cr
         \code{Y} - variable of interest, \cr
+        °code{Rh} - the expected response rate in each stratum, \cr
         \code{indicator} - variable for full surveys, \cr
         \code{sup_w} - variable for weight limit in domain of stratum, \cr
         \code{sup_cv} - Variable for maximum coeficient of variation, \cr
