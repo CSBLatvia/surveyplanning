@@ -1,0 +1,66 @@
+\name{optsize}
+\alias{optsize}
+
+\title{Optimal sample size allocation}
+
+\description{
+The function computes optimal sample size allocation over strata.
+}
+
+\usage{
+optsize(H, n, poph, s2h = NULL, Rh = NULL, deffh=NULL, dataset = NULL)
+}
+
+\arguments{
+
+\item{H}{The stratum variable. One dimensional object convertible to one-column \code{data.table}, variable name as character, or column number.}
+
+\item{n}{Total sample size. One dimensional object with length one.}
+
+\item{poph}{Population size in each stratum. One dimensional object convertible to one-column \code{data.table}, variable name as character, or column number.}
+
+\item{s2h}{The expected population variance \eqn{S^2} for variables of interest in each stratum (optional). If not defined, it is assumed to be 1 in each stratum. Object convertible to \code{data.table}, variable name as character vector, or column numbers.}
+
+\item{Rh}{The expected response rate in each stratum (optional). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.}
+
+\item{deffh}{The expected design effect for the estimate of variable (optional). If not defined, it is assumed to be 1 for each variable in each stratum. If is defined, then variables is defined the same arrangement as \code{Yh}. Object convertible to \code{data.table}, variable name as character vector, or column numbers.}
+
+\item{dataset}{Optional survey data object convertible to \code{data.table} with one row for each stratum.}
+}
+
+\details{
+If \code{s2h} and \code{Rh} is not defined, the sample allocation will be calculated as proportional allocation (proportional to the population size).
+
+If \code{Rh} is not defined, the sample allocation will be calculated as Neyman allocation.
+
+}
+
+\value{
+
+  An object as \code{data.table}, with variables:
+
+       \code{H} - stratum, \cr
+       \code{variable} - the name of variable for population variance \eqn{S^2}, \cr
+       \code{s2h} - population variance \eqn{S^2}, \cr
+       \code{Rh} - the expectedresponse rate, \cr
+       \code{deffh} - the expected design effect, \cr
+       \code{poph} - population size, \cr
+       \code{deffh} - design effect, \cr
+       \code{nh} - sample size.
+}
+
+\seealso{\code{\link{expsize}}, \code{\link{dom_optimal_allocation}}}
+
+\examples{
+
+data <- data.table(H=1:3,
+                   s2h=10*runif(3), s2h2=10*runif(3),
+                   poph=8*1:3, Rh=rep(1,3), dd=c(1,1,1))
+
+vars <- optsize(H="H", s2h=c("s2h", "s2h2"),
+                n=10, poph="poph",
+                Rh="Rh", dataset = data)
+vars
+}
+
+\keyword{surveyplanning}
