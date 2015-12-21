@@ -1,6 +1,7 @@
 dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
-                                   indicator, sup_w, sup_cv, 
-                                   min_size=3, correction_before=FALSE,
+                                   deffh=NULL, indicator, 
+                                   sup_w, sup_cv, min_size=3,
+                                    correction_before=FALSE,
                                    dataset=NULL){
 
   if (!any(is.logical(correction_before))|length(correction_before) != 1)
@@ -25,6 +26,9 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
       if(!is.null(Rh)) {
           if (min(Rh %in% names(dataset))!=1) stop("'Rh' does not exist in 'dataset'!")
           if (min(Rh %in% names(dataset))==1) Rh <- dataset[, Rh, with=FALSE] }
+      if(!is.null(deffh)) {
+          if (min(deffh %in% names(dataset))!=1) stop("'deffh' does not exist in 'dataset'!")
+          if (min(deffh %in% names(dataset))==1) deffh <- dataset[, deffh, with=FALSE] }
       if (!is.null(indicator)) {
           if (min(indicator %in% names(dataset)) != 1) stop("'indicator' does not exist in 'dataset'!")
           if (min(indicator %in% names(dataset)) == 1) indicator <- dataset[, indicator, with = FALSE] }
@@ -87,12 +91,21 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
 
   # Rh
   if (is.null(Rh)) Rh <- rep(1, n)
-  Rh <- data.frame(Rh)
+  Rh <- data.table(Rh)
   if (nrow(Rh) != n) stop("'Rh' must be equal with 'Yh' row count")
   if (ncol(Rh) != 1) stop("'Rh' must be vector or 1 column data.frame, matrix, data.table")
-  Rh <- Rh[, 1]
-  if (!is.numeric(Rh)) stop("'Rh' must be numerical")
-  if (any(is.na(Rh))) stop("'Rh' has unknown values")
+  if (!is.numeric(Rh[[1]])) stop("'Rh' must be numerical")
+  if (any(is.na(Rh[[1]]))) stop("'Rh' has unknown values")
+
+  # deffh
+  if (!is.null(deffh)) {
+    deffh <- data.table(deffh, check.names=TRUE)
+    if (nrow(deffh) != n) stop("'deffh' length must be equal with 'Yh' row count")
+    if (ncol(deffh) != ncol(Y)) stop("'deffh' and 'Y' must be equal column count")
+    if (any(is.na(deffh))) stop("'deffh' has unknown values")
+    if (!all(sapply(deffh, is.numeric))) stop("'deffh' must be numeric values")
+    if (is.null(names(deffh))) stop("'deffh' must be colnames")
+   }
 
   # Dom
   if (!is.null(Dom)) {
@@ -106,25 +119,28 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
     Dom[, (names(Dom)):=lapply(.SD, as.character)]
   }
 
-  sd_Y <- apj <- min_apj <- poph <- nh <- index__1 <- NULL
-  samplsize <- izl_str <- var_est <- s2h_Y <- NULL
-  . <- cv_check <- design_weights <- sum_Y <- sample100 <- NULL
+  poph_sample <- sample100 <- var_est <- s2_Y <- NULL
+  apj <- min_apj <- poph <- nh <- index__1 <- NULL
+  . <- cv_check <- design_weights <- sum_Y <- NULL
 
-  if (is.null(Dom)) Dom <- data.table(dom=rep(1,n))
+  if (is.null(Dom)) Dom <- data.table(dom=rep(1, n))
 
-  r <- data.table(id, Dom, H, Y, Rh, indicator, sup_w, sup_cv)
+  r <- data.table(id, Dom, H, Y, Rh, deffh, indicator, sup_w, sup_cv)
 
   id1 <- names(id)
   Dom_agg <- data.table(unique(Dom))
   dom1 <- names(Dom_agg)
   strata1 <- names(H)
   Y1 <- names(Y)
+  Rh1 <- names(Rh)
+  deffh1 <- names(deffh)
   indicator1 <- names(indicator)
   sup_w1 <- names(sup_w)
   sup_cv1 <- names(sup_cv)
   namesr <- names(r)
 
   dv <- lapply(1:nrow(Dom_agg), function(j) {
+
           D <- Dom_agg[j,][rep(1,nrow(Dom)),]
           d0 <- r[(rowSums(Dom == D) == ncol(Dom))]
           d1 <- d0[get(indicator1) == 0]
@@ -135,33 +151,37 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
           #the part, where create sample
           nd <- d0[get(indicator1) == 0, .N]
 
-          if (nd != 0) {
+         if (nd != 0) {
                 aa <- d0[ , .(poph = .N,
-                              s2h_Y = var(get(Y1), na.rm = TRUE),
+                              s2_Y = var(get(Y1), na.rm = TRUE),
                               sum_Y = sum(as.numeric(get(Y1)), na.rm = TRUE),
-                              izl_str = sum(1 - get(indicator1), na.rm = TRUE),
-                              Rh = mean(Rh, na.rm = TRUE),
+                              poph_sample = sum(1 - get(indicator1), na.rm = TRUE),
+                              Rh = mean(get(Rh1), na.rm = TRUE),
+                              deffh = mean(get(deffh1), na.rm = TRUE),
                               sup_w = mean(get(sup_w1), na.rm = TRUE),
                               sup_cv = mean(get(sup_cv1), na.rm = TRUE)), keyby = strata1]
-                setnames(aa, c("sup_w", "sup_cv"), c(sup_w1, sup_cv1))
-                aa[is.na(s2h_Y), s2h_Y:=0]
-
-                aa[, apj:=as.numeric(min_size)]
-                aa[, poph:=as.numeric(poph)]
-                aa[apj>poph, apj:= poph]
-                aa[, samplsize:=poph - izl_str]
-                a1 <- copy(aa)
-                       
-                A <- aa[, sum(apj)][1]:aa[, sum(poph)][1]
-                l <- length(A)                
+                setnames(aa, c("Rh", "deffh", "sup_w","sup_cv"), c(Rh1, deffh1, sup_w1, sup_cv1))
                 
+                aa[is.na(s2_Y), s2_Y:= 0]
+                aa[, poph:=as.numeric(poph)]
+                aa[, apj:=as.numeric(min_size)]
+                aa[, poph_sample:=as.numeric(poph_sample)]
+                aa[apj>poph_sample, apj:= poph_sample]
+                aa[, sample100:=poph - poph_sample]
+
+                A <- aa[, sum(apj)][1]:aa[, sum(poph_sample)][1]
+                l <- length(A)
+                a1 <- copy(aa)
+                a1[, (c("apj", "poph_sample")):=NULL]
+
                 for (k in 1:l) {
                         t1 <- optsize(H=strata1, n=A[k], poph="poph", 
-                                      s2h = "s2h_Y", Rh = "Rh", dataset = aa) 
+                                      s2h = "s2_Y", Rh = Rh1, deffh=deffh1,
+                                      dataset = aa[poph_sample!=0]) 
                         t1 <- t1[, c(strata1, "nh"), with = FALSE][, nh:=round(nh)]
-                        a2 <- merge(aa, t1, all.x = TRUE)
+                        a2 <- merge(a1, t1, all.x = TRUE)
                         a2[is.na(nh), nh:=0]
-                        a2[, nh:=nh + samplsize]
+                        a2[, nh:=nh + sample100]
 
                         a2[nh < min_size, nh:= as.numeric(min_size)]
                         a2[nh > poph, nh:= poph]
@@ -170,12 +190,11 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
                         a2[(poph/nh > get(sup_w1)) & (correction_before), nh:= nh + 1]
 
                         sup_cvt <- mean(a2[[sup_cv1]])
-
                         as <- expvar(Yh="sum_Y", Zh=NULL, H=strata1, 
-                                     s2h="s2h_Y", nh="nh", poph="poph", 
-                                     Rh = "Rh", deffh = NULL, Dom = NULL,
+                                     s2h="s2_Y", nh="nh", poph="poph", 
+                                     Rh = Rh1, deffh = deffh1, Dom = NULL,
                                      dataset = a2)$result
-                        if (any(is.na(as[["cv"]]) | as[["cv"]] < sup_cvt)) break
+                         if (any(is.na(as[["cv"]]) | as[["cv"]] < sup_cvt)) break
                     }
                 d <- merge(d0, a2[, c(strata1, "poph", "nh"), with = FALSE], all = TRUE, by = strata1)
            } else {
@@ -197,16 +216,18 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
     
      a1 <- r3[, .(nh = mean(nh, na.rm = TRUE),
                   poph = .N,
-                  Rh = mean(Rh, na.rm = TRUE),
+                  Rh = mean(get(Rh1), na.rm = TRUE),
                   sum_Y = sum(as.numeric(get(Y1)), na.rm = TRUE),
-                  s2h_Y = var(get(Y1), na.rm = TRUE)), keyby = c(strata1,  dom1)]
+                  s2_Y = var(get(Y1), na.rm = TRUE)), keyby = c(strata1,  dom1)]
      a1[is.na(sum_Y), sum_Y:=0]
-     a1[is.na(s2h_Y), s2h_Y:=0]
-     setnames(a1, "sum_Y", Y1)
+     a1[is.na(s2_Y), s2_Y:=0]
+     setnames(a1, c("sum_Y","Rh"), c(Y1, Rh1))
      
-     a2 <- expvar(Yh = Y1, H = strata1, s2h = "s2h_Y",
-                  nh = "nh", poph = "poph", Rh="Rh",
-                  Dom = dom1, dataset = a1)
+     a2 <- expvar(Yh = Y1, H = strata1,
+                  s2h = "s2_Y", nh = "nh",
+                  poph = "poph", Rh= Rh1,
+                  deffh = deffh1, Dom = dom1,
+                  dataset = a1)
      a1 <- NULL
 
      r4 <- r3[, .(nh = mean(nh, na.rm = TRUE),

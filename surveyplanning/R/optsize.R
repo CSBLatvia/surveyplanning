@@ -1,9 +1,9 @@
 ##################
 
-optsize <- function(H, n, poph, s2h = NULL, Rh = NULL, dataset = NULL) {
+optsize <- function(H, n, poph, s2h = NULL, Rh = NULL, deffh=NULL, dataset = NULL) {
 
   ### Checking
-  if(any(abs(n - round(n)) >= .Machine$double.eps | n < 0)) stop("'n' must be a integer value greater than 0")
+  if( length(n)!=1 | !any(n>0 | abs(n - round(n)) < .Machine$double.eps)) stop("'n' must be a integer value greater than 0")
 
   if(!is.null(dataset)) {
       dataset <- data.table(dataset)
@@ -19,6 +19,9 @@ optsize <- function(H, n, poph, s2h = NULL, Rh = NULL, dataset = NULL) {
       if(!is.null(Rh)) {
           if (min(Rh %in% names(dataset))!=1) stop("'Rh' does not exist in 'dataset'!")
           if (min(Rh %in% names(dataset))==1) Rh <- dataset[, Rh, with=FALSE] }
+      if(!is.null(deffh)) {
+          if (min(deffh %in% names(dataset))!=1) stop("'deffh' does not exist in 'dataset'!")
+          if (min(deffh %in% names(dataset))==1) deffh <- dataset[, deffh, with=FALSE] }
     }
 
   # s2h
@@ -53,27 +56,35 @@ optsize <- function(H, n, poph, s2h = NULL, Rh = NULL, dataset = NULL) {
   if (!is.numeric(Rh)) stop("'Rh' must be numerical")
   if (any(is.na(Rh))) stop("'Rh' has unknown values")
 
+  # deffh
+  if (!is.null(deffh)) {
+    deffh <- data.table(deffh, check.names=TRUE)
+    if (nrow(deffh) != nrow(s2h)) stop("'deffh' length must be equal with 's2h' row count")
+    if (ncol(deffh) != m) stop("'deffh' and 'Yh' must be equal column count")
+    if (any(is.na(deffh))) stop("'deffh' has unknown values")
+    if (!all(sapply(deffh, is.numeric))) stop("'deffh' must be numeric values")
+    if (is.null(names(deffh))) stop("'deffh' must be colnames")
+   }
+
   variable <- pnh <- nh <- NULL
 
-  Rh <- melt(data.table(H, Rh), id=c(names(H)))
-  Rh[, variable := NULL]
-  setnames(Rh, "value", "Rh")
-  setkeyv(Rh, names(H))
+  resulth <- data.table(H, Rh=Rh, poph=poph)
 
-  poph <- melt(data.table(H, poph), id=c(names(H)))
-  poph[, variable:=NULL]
-  setnames(poph, "value", "poph")
-  setkeyv(poph, names(H))
-
-  resulth <- merge(Rh, poph, all=TRUE)
-
-  s2h <- melt(data.table(H, s2h), id=c(names(H)))
+  s2h <- data.table(H, s2h)
+  ns2h <- names(s2h)
+  s2h <- melt(s2h, id=c(names(H)))
   setnames(s2h, "value", "s2h")
-  setkeyv(s2h, c(names(H), "variable"))
-  setkeyv(resulth, c(names(H)))
-  resulth <- merge(s2h, resulth, all=TRUE)
+  resulth <- merge(s2h, resulth, all=TRUE, by=names(H))
 
-  resulth[, pnh := poph * sqrt(s2h / Rh)]
+  if (!is.null(deffh)) {
+      deffh <- data.table(H, deffh)
+      setnames(deffh, names(deffh), ns2h)
+      deffh <- melt(deffh, id=names(H))
+      setnames(deffh, "value", "deffh")
+      resulth <- merge(resulth, deffh, all=TRUE, by=c(names(H), "variable"))
+  } else resulth[, deffh:=1]
+
+  resulth[, pnh := poph * sqrt(s2h * deffh / Rh)]
   resulth[, nh := n * pnh / sum(pnh), by = "variable"]
   resulth[, pnh:=NULL]
   return(resulth)

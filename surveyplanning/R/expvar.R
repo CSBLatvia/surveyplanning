@@ -117,19 +117,7 @@ expvar <- function(Yh, Zh=NULL, H, s2h, nh, poph,
   domH <- H
   if (!is.null(Dom)) domH <- data.table(Dom, domH)
 
-  nh <- data.table(melt(data.table(domH, nh), id=c(names(domH))))
-  nh[, variable:=NULL]
-  setnames(nh, "value", "nh")
-
-  Rh <- data.table(melt(data.table(domH, Rh), id=c(names(domH))))
-  Rh[, variable:=NULL]
-  setnames(Rh, "value", "Rh")
-  resulth <- merge(nh, Rh, all=TRUE, by=names(domH))
-
-  poph <- data.table(melt(data.table(domH, poph), id=c(names(domH))))
-  poph[, variable:=NULL]
-  setnames(poph, "value", "poph")
-  resulth <- merge(resulth, poph, all=TRUE, by=names(domH))
+  resulth <- data.table(domH, nh=nh, Rh=Rh, poph=poph)
 
   setnames(s2h, names(s2h), names(Yh))
   s2h <- data.table(melt(data.table(domH, s2h), id=c(names(domH))))
