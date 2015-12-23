@@ -217,11 +217,12 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
      a1 <- r3[, .(nh = mean(nh, na.rm = TRUE),
                   poph = .N,
                   Rh = mean(get(Rh1), na.rm = TRUE),
+                  deffh = mean(get(deffh1), na.rm = TRUE),
                   sum_Y = sum(as.numeric(get(Y1)), na.rm = TRUE),
                   s2_Y = var(get(Y1), na.rm = TRUE)), keyby = c(strata1,  dom1)]
      a1[is.na(sum_Y), sum_Y:=0]
      a1[is.na(s2_Y), s2_Y:=0]
-     setnames(a1, c("sum_Y","Rh"), c(Y1, Rh1))
+     setnames(a1, c("sum_Y", "Rh", "deffh"), c(Y1, Rh1, deffh1))
      
      a2 <- expvar(Yh = Y1, H = strata1,
                   s2h = "s2_Y", nh = "nh",
