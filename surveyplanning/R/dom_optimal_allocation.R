@@ -98,14 +98,13 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
   if (any(is.na(Rh[[1]]))) stop("'Rh' has unknown values")
 
   # deffh
-  if (!is.null(deffh)) {
-    deffh <- data.table(deffh, check.names=TRUE)
-    if (nrow(deffh) != n) stop("'deffh' length must be equal with 'Yh' row count")
-    if (ncol(deffh) != ncol(Y)) stop("'deffh' and 'Y' must be equal column count")
-    if (any(is.na(deffh))) stop("'deffh' has unknown values")
-    if (!all(sapply(deffh, is.numeric))) stop("'deffh' must be numeric values")
-    if (is.null(names(deffh))) stop("'deffh' must be colnames")
-   }
+  if (is.null(deffh)) deffh <- rep(1, n)
+  deffh <- data.table(deffh, check.names=TRUE)
+  if (nrow(deffh) != n) stop("'deffh' length must be equal with 'Yh' row count")
+  if (ncol(deffh) != ncol(Y)) stop("'deffh' and 'Y' must be equal column count")
+  if (any(is.na(deffh))) stop("'deffh' has unknown values")
+  if (!all(sapply(deffh, is.numeric))) stop("'deffh' must be numeric values")
+  if (is.null(names(deffh))) stop("'deffh' must be colnames")
 
   # Dom
   if (!is.null(Dom)) {
