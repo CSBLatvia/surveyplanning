@@ -37,7 +37,7 @@ expsize <- function(Yh, H, s2h, poph, Rh = NULL, deffh = NULL, CVh,
   if (is.null(names(Yh))) stop("'Yh' must be colnames")
   Yh <- data.table(sapply(Yh, as.numeric))
 
-  s2h <- data.table(S2h, check.names=TRUE)
+  s2h <- data.table(s2h, check.names=TRUE)
   if (nrow(s2h) != n) stop("'s2h' length must be equal with 'Yh' row count")
   if (ncol(s2h) != m) stop("'s2h' and 'Yh' must be equal column count")
   if (any(is.na(s2h))) stop("'s2h' has unknown values")
