@@ -130,6 +130,6 @@ expsize <- function(Yh, H, s2h, poph, Rh = NULL, deffh = NULL, CVh,
   Yh <- deffh <- s2h <- NULL
 
   resulth[, nh := poph ^ 2 * s2h * deffh /
-            (Rh * ((estim * CVh/100) ^ 2 + poph * s2h  * deffh))]
+                    (Rh * ((estim * CVh/100) ^ 2 + poph * s2h  * deffh))]
   return(resulth)
 }
