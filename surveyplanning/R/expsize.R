@@ -13,7 +13,7 @@ expsize <- function(Yh, H, s2h, poph, Rh = NULL, deffh = NULL, CVh,
           if (min(H %in% names(dataset))==1) H <- dataset[, H, with=FALSE]}
       if(!is.null(s2h)) {
           if (min(s2h %in% names(dataset))!=1) stop("'s2h' does not exist in 'dataset'!")
-          if (min(s2h %in% names(dataset))==1) S2h <- dataset[, s2h, with=FALSE] }
+          if (min(s2h %in% names(dataset))==1) s2h <- dataset[, s2h, with=FALSE] }
       if(!is.null(CVh)) {
           if (min(CVh %in% names(dataset))!=1) stop("'CVh' does not exist in 'dataset'!")
           if (min(CVh %in% names(dataset))==1) CVh <- dataset[, CVh, with=FALSE] }
