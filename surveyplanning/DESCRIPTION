@@ -1,7 +1,11 @@
 Package: surveyplanning
 Type: Package
 Title: Survey Planning Tools
+<<<<<<< HEAD
 Version: 1.4
+=======
+Version: 1.3
+>>>>>>> 53f6948e424685177a24a11e5a897d3a55926f21
 Date: 2016-04-14
 Depends: R (>= 3.0.0), data.table (>= 1.9.6)
 Authors@R: c(person("Juris", "Breidaks", email = "rcsb@csb.gov.lv",  role = c("aut", "cre")), person("Martins", "Liberts", role = "aut"), person("Janis", "Jukams", role = "aut"))
