@@ -1,6 +1,6 @@
 expvar <- function(Yh, Zh=NULL, H, s2h, nh, poph, 
-                               Rh = NULL, deffh = NULL, Dom = NULL,
-                               dataset = NULL) {
+                   Rh = NULL, deffh = NULL, Dom = NULL,
+                   dataset = NULL) {
 
   if(!is.null(dataset)) {
       dataset <- data.table(dataset)

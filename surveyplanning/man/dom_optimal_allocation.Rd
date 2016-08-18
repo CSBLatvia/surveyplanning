@@ -126,6 +126,8 @@ dom_optimal_allocation(id, Dom, H, Y, Rh=NULL, deffh=NULL,
 
 \examples{
 
+data(eusilc)
+
 #vars <- dom_optimal_allocation(id, dom, H, Y, indicator, 
 #                                         sup_w, sup_cv, min_size=3,
 #                                         correction_before=FALSE,

@@ -13,8 +13,8 @@ calculation of optimal sample size allocation.
 \details{
 \tabular{ll}{
 Package: \tab surveyplanning\cr
-Version: \tab 1.4\cr
-Date: \tab 2016-04-14\cr
+Version: \tab 2.0\cr
+Date: \tab 2016-08-01\cr
 Depends: \tab R (>= 3.0.0), data.table (>= 1.9.6) \cr
 License: \tab GPL (>= 2)\cr
 URL: \tab https://github.com/CSBLatvia/surveyplanning/ \cr
@@ -23,6 +23,7 @@ BugReports: \tab https://github.com/CSBLatvia/surveyplanning/issues/ \cr
 
 Index:
 \preformatted{
+dom_optimal_allocation  Optimal sample size allocation
 expsize                 Sample size calculation
 expvar                  Expected precision for the estimates of totals
 optsize                 Optimal sample size allocation
