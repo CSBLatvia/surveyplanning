@@ -154,16 +154,13 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
   aa[, poph_sample:= as.numeric(poph_sample)]
   aa[apj > poph_sample, apj:= poph_sample]
   aa[, sample100:= poph - poph_sample]
-  aa[, sum_apj:= as.integer(sum(apj)) - 1, by = dom1]
-  aa[, sum_poph:= sum(poph_sample), by = dom1]
-  aa[, sum_apj:= as.integer(sum(apj)) - 1, by = dom1]
+  aa[, sum_apj:= as.integer(sum(apj)), by = dom1]
 
   a1 <- copy(aa)
-  a1[, cv:=1000]
-  a1[, nh:=sample100]
+  a1[, cv := 1000]
+  a1[, nh := sample100]
 
   while (nrow(a1[cv > sup_cv]) > 0){
-         a1[cv > sup_cv & poph_sample != 0, sum_apj:= as.integer(sum_apj) + 1]
          a1[, (c("nh", "cv")):=NULL]
          a1[poph_sample != 0, pnh := poph * sqrt(s2_Y * deffh / Rh)]
          a1[poph_sample != 0, nh:= sum_apj * pnh / sum(pnh), by = dom1]
@@ -175,10 +172,11 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
          a1[(poph/nh > sup_w) & (correction_before), nh:= round(poph / sup_w)]
          a1[(poph/nh > sup_w) & (correction_before), nh:= nh + 1]
 
-         a1[, vars:=expvarh(s2h=get("s2_Y"), nh=get("nh"), poph=get("poph"), 
+         a1[, vars:=expvarh(s2h = get("s2_Y"), nh = get("nh"), poph = get("poph"), 
                             Rh = get("Rh"), deffh = get("deffh"))]
-         a1[, cv:= sqrt(sum(vars))/sum(sum_Y) * 100, by=dom1]
-         a1[, vars:=NULL]
+         a1[, cv := sqrt(sum(vars))/sum(sum_Y) * 100, by = dom1]
+         a1[, vars := NULL]
+         a1[cv > sup_cv & poph_sample != 0, sum_apj := as.integer(sum_apj) + 1]
       }             
 
   d <- merge(r, a1[, c(dom1, strata1, "poph", "nh"), with = FALSE], all = TRUE, by = c(dom1, strata1))
