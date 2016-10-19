@@ -5,27 +5,27 @@ expsize <- function(Yh, H, s2h, poph, Rh = NULL, deffh = NULL, CVh,
 
   if(!is.null(dataset)) {
       dataset <- data.table(dataset)
-      if (min(Yh %in% names(dataset))!=1) stop("'Yh' does not exist in 'dataset'!")
-      if (min(Yh %in% names(dataset))==1) Yh <- dataset[, Yh, with=FALSE]
+      if (min(Yh %in% names(dataset)) != 1) stop("'Yh' does not exist in 'dataset'!")
+      if (min(Yh %in% names(dataset)) == 1) Yh <- dataset[, Yh, with = FALSE]
 
       if(!is.null(H)) {
-          if (min(H %in% names(dataset))!=1) stop("'H' does not exist in 'dataset'!")
-          if (min(H %in% names(dataset))==1) H <- dataset[, H, with=FALSE]}
+          if (min(H %in% names(dataset)) != 1) stop("'H' does not exist in 'dataset'!")
+          if (min(H %in% names(dataset)) == 1) H <- dataset[, H, with = FALSE]}
       if(!is.null(s2h)) {
-          if (min(s2h %in% names(dataset))!=1) stop("'s2h' does not exist in 'dataset'!")
-          if (min(s2h %in% names(dataset))==1) s2h <- dataset[, s2h, with=FALSE] }
+          if (min(s2h %in% names(dataset)) != 1) stop("'s2h' does not exist in 'dataset'!")
+          if (min(s2h %in% names(dataset)) == 1) s2h <- dataset[, s2h, with = FALSE] }
       if(!is.null(CVh)) {
-          if (min(CVh %in% names(dataset))!=1) stop("'CVh' does not exist in 'dataset'!")
-          if (min(CVh %in% names(dataset))==1) CVh <- dataset[, CVh, with=FALSE] }
+          if (min(CVh %in% names(dataset)) != 1) stop("'CVh' does not exist in 'dataset'!")
+          if (min(CVh %in% names(dataset)) == 1) CVh <- dataset[, CVh, with = FALSE] }
       if(!is.null(poph)) {
-          if (min(poph %in% names(dataset))!=1) stop("'poph' does not exist in 'dataset'!")
-          if (min(poph %in% names(dataset))==1) poph <- dataset[, poph, with=FALSE] }
+          if (min(poph %in% names(dataset)) != 1) stop("'poph' does not exist in 'dataset'!")
+          if (min(poph %in% names(dataset)) == 1) poph <- dataset[, poph, with = FALSE] }
       if(!is.null(Rh)) {
-          if (min(Rh %in% names(dataset))!=1) stop("'Rh' does not exist in 'dataset'!")
-          if (min(Rh %in% names(dataset))==1) Rh <- dataset[, Rh, with=FALSE]}
+          if (min(Rh %in% names(dataset)) != 1) stop("'Rh' does not exist in 'dataset'!")
+          if (min(Rh %in% names(dataset)) == 1) Rh <- dataset[, Rh, with = FALSE]}
       if(!is.null(deffh)) {
-          if (min(deffh %in% names(dataset))!=1) stop("'deffh' does not exist in 'dataset'!")
-          if (min(deffh %in% names(dataset))==1) deffh <- dataset[, deffh, with=FALSE] }
+          if (min(deffh %in% names(dataset)) != 1) stop("'deffh' does not exist in 'dataset'!")
+          if (min(deffh %in% names(dataset)) == 1) deffh <- dataset[, deffh, with = FALSE] }
   }
 
   # Yh
@@ -56,7 +56,7 @@ expsize <- function(Yh, H, s2h, poph, Rh = NULL, deffh = NULL, CVh,
   CVh <- data.frame(CVh)
   if (nrow(CVh) != n) stop("'CVh' must be equal with 'Yh' row count")
   if (ncol(CVh) != 1) stop("'CVh' must be 1 column data.frame, matrix, data.table")
-  CVh <- CVh[,1]
+  CVh <- CVh[, 1]
   if (!is.numeric(CVh)) stop("'CVh' must be numerical")
   if (any(is.na(CVh))) stop("'CVh' has unknown values")
 
@@ -64,7 +64,7 @@ expsize <- function(Yh, H, s2h, poph, Rh = NULL, deffh = NULL, CVh,
   poph <- data.frame(poph)
   if (nrow(poph) != n) stop("'poph' must be equal with 'Yh' row count")
   if (ncol(poph) != 1) stop("'poph' must be vector or 1 column data.frame, matrix, data.table")
-  poph <- poph[,1]
+  poph <- poph[, 1]
   if (!is.numeric(poph)) stop("'poph' must be numerical")
   if (any(is.na(poph))) stop("'poph' has unknown values")
 
@@ -91,46 +91,39 @@ expsize <- function(Yh, H, s2h, poph, Rh = NULL, deffh = NULL, CVh,
   CVh <- melt(data.table(H, CVh), id = c(names(H)))
   CVh[, variable := NULL]
   setnames(CVh, "value", "CVh")
-  setkeyv(CVh, names(H))
 
   Rh <- melt(data.table(H, Rh), id = c(names(H)))
   Rh[, variable := NULL]
   setnames(Rh, "value", "Rh")
-  setkeyv(Rh, names(H))
-  resulth <- merge(CVh, Rh, all = TRUE)
+  resulth <- merge(CVh, Rh, all = TRUE, by = names(H))
 
   poph <- melt(data.table(H, poph), id = c(names(H)))
   poph[, variable := NULL]
   setnames(poph, "value", "poph")
-  setkeyv(poph, names(H))
-  resulth <- merge(resulth, poph, all = TRUE)
+  resulth <- merge(resulth, poph, all = TRUE, by = names(H))
 
   Rh <- CVh <- poph <- NULL
 
   setnames(s2h, names(s2h), names(Yh))
   s2h <- melt(data.table(H, s2h), id=c(names(H)))
   setnames(s2h, "value", "s2h")
-  setkeyv(s2h, c(names(H), "variable"))
-  resulth <- merge(s2h, resulth, all = TRUE)
-  setkeyv(resulth, c(names(H), "variable"))
+  resulth <- merge(s2h, resulth, all = TRUE, by = c(names(H), "variable"))
 
   if (!is.null(deffh)) {
     setnames(deffh, names(deffh), names(Yh))
     deffh <- melt(data.table(H, deffh), id = c(names(H)))
     setnames(deffh, "value", "deffh")
-    setkeyv(deffh, c(names(H), "variable"))
-    resulth <- merge(deffh, resulth, all = TRUE)
+    resulth <- merge(deffh, resulth, all = TRUE, by = c(names(H), "variable"))
   }
 
-  if (is.null(deffh)) resulth[, deffh:=1]
-  Yh <- melt(data.table(H, Yh), id=c(names(H)))
+  if (is.null(deffh)) resulth[, deffh := 1]
+  Yh <- melt(data.table(H, Yh), id = c(names(H)))
   setnames(Yh, "value", "estim")
-  setkeyv(Yh, c(names(H), "variable"))
-  resulth <- merge(Yh, resulth, all=TRUE)
+  resulth <- merge(Yh, resulth, all = TRUE, by = c(names(H), "variable"))
 
   Yh <- deffh <- s2h <- NULL
 
   resulth[, nh := poph ^ 2 * s2h * deffh /
-                    (Rh * ((estim * CVh/100) ^ 2 + poph * s2h  * deffh))]
+                    (Rh * ((estim * CVh / 100) ^ 2 + poph * s2h  * deffh))]
   return(resulth)
 }

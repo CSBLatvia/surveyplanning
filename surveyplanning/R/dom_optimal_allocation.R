@@ -4,9 +4,9 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
                                    correction_before=FALSE,
                                    dataset=NULL){
 
-  if (!any(is.logical(correction_before))|length(correction_before) != 1)
+  if (!any(is.logical(correction_before)) | length(correction_before) != 1)
                             stop("'corrected_before' must be the logical value")
-  if( length(min_size)!=1 | !any(min_size>0 | abs(min_size - round(min_size)) < .Machine$double.eps)) 
+  if( length(min_size)!=1 | !any(min_size > 0 | abs(min_size - round(min_size)) < .Machine$double.eps)) 
                             stop("'min_size' must be a integer value greater than 0")
 
   if (!is.null(dataset)) {
@@ -71,7 +71,7 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
   if (ncol(indicator) != 1) stop("'indicator' must be vector or 1 column data.frame, matrix, data.table")
   if (!is.numeric(indicator[[1]])) stop("'indicator' must be numerical")
   if (any(is.na(indicator[[1]]))) stop("'indicator' has unknown values")
-  indicator1 <- indicator[,.N, keyby = indicator][[1]]
+  indicator1 <- indicator[, .N, keyby = indicator][[1]]
   if (any(!(indicator1 %in% c(0,1)))) stop("'indicator' must be only two values - 0,1")
 
 
@@ -99,7 +99,7 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
 
   # deffh
   if (is.null(deffh)) deffh <- rep(1, n)
-  deffh <- data.table(deffh, check.names=TRUE)
+  deffh <- data.table(deffh, check.names = TRUE)
   if (nrow(deffh) != n) stop("'deffh' length must be equal with 'Yh' row count")
   if (ncol(deffh) != ncol(Y)) stop("'deffh' and 'Y' must be equal column count")
   if (any(is.na(deffh))) stop("'deffh' has unknown values")
@@ -148,35 +148,35 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
                sup_cv = mean(get(sup_cv1), na.rm = TRUE)), 
                keyby = c(dom1, strata1)]
   setnames(aa, c("Rh"), c(Rh1))
-  aa[is.na(s2_Y), s2_Y:= 0]
-  aa[, poph:= as.numeric(poph)]
-  aa[, apj:= as.numeric(min_size)]
-  aa[, poph_sample:= as.numeric(poph_sample)]
-  aa[apj > poph_sample, apj:= poph_sample]
-  aa[, sample100:= poph - poph_sample]
-  aa[, sum_apj:= as.integer(sum(apj)), by = dom1]
+  aa[is.na(s2_Y), s2_Y := 0]
+  aa[, poph := as.numeric(poph)]
+  aa[, apj := as.numeric(min_size)]
+  aa[, poph_sample := as.numeric(poph_sample)]
+  aa[apj > poph_sample, apj := poph_sample]
+  aa[, sample100 := poph - poph_sample]
+  aa[poph_sample != 0, sum_apj := as.integer(sum(apj)) - 1, by = dom1]
 
   a1 <- copy(aa)
   a1[, cv := 1000]
   a1[, nh := sample100]
 
   while (nrow(a1[cv > sup_cv]) > 0){
+         a1[(cv > sup_cv) & (poph_sample != 0), sum_apj := sum_apj + 1]
          a1[, (c("nh", "cv")):=NULL]
          a1[poph_sample != 0, pnh := poph * sqrt(s2_Y * deffh / Rh)]
-         a1[poph_sample != 0, nh:= sum_apj * pnh / sum(pnh), by = dom1]
+         a1[poph_sample != 0, nh := sum_apj * pnh / sum(pnh), by = dom1]
 
-         a1[is.na(nh), nh:= 0]
-         a1[, nh:= nh + sample100]
-         a1[nh < min_size, nh:= as.numeric(min_size)]
-         a1[nh > poph, nh:= poph]
+         a1[is.na(nh), nh := 0]
+         a1[, nh := nh + sample100]
+         a1[nh < min_size, nh := as.numeric(min_size)]
+         a1[nh > poph, nh := poph]
          a1[(poph/nh > sup_w) & (correction_before), nh:= round(poph / sup_w)]
          a1[(poph/nh > sup_w) & (correction_before), nh:= nh + 1]
 
-         a1[, vars:=expvarh(s2h = get("s2_Y"), nh = get("nh"), poph = get("poph"), 
-                            Rh = get("Rh"), deffh = get("deffh"))]
+         a1[, vars := expvarh(s2h = get("s2_Y"), nh = get("nh"), poph = get("poph"), 
+                              Rh = get("Rh"), deffh = get("deffh"))]
          a1[, cv := sqrt(sum(vars))/sum(sum_Y) * 100, by = dom1]
          a1[, vars := NULL]
-         a1[cv > sup_cv & poph_sample != 0, sum_apj := as.integer(sum_apj) + 1]
       }             
 
   d <- merge(r, a1[, c(dom1, strata1, "poph", "nh"), with = FALSE], all = TRUE, by = c(dom1, strata1))
@@ -212,21 +212,21 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
 
   # sample size
   r4 <- copy(r3)
-  r4[, index__1:=1]
+  r4[, index__1 := 1]
   r4 <- rbind(r4[1], r4)
-  r4[1,(indicator1):=1]
-  r4[1,("index__1"):=0]
+  r4[1, (indicator1) := 1]
+  r4[1, ("index__1") := 0]
 
-  apj_sum <- r4[get(indicator1)==1, .(sample100=sum(index__1, na.rm = TRUE)), keyby=c(strata1, dom1)]
+  apj_sum <- r4[get(indicator1) == 1, .(sample100 = sum(index__1, na.rm = TRUE)), keyby = c(strata1, dom1)]
      
   ds <- c(strata1, dom1)
-  dom_strata_size <- r4[, lapply(.SD, mean, na.rm = TRUE), by=c(strata1, dom1), .SDcols=c(sup_w1, "poph", "nh")]
-  dom_strata_size <- merge(dom_strata_size, apj_sum, all.x =TRUE, by = c(strata1, dom1))
-  dom_strata_size[is.na(sample100), sample100:=0]
-  dom_strata_size[, design_weights:=poph/nh]
+  dom_strata_size <- r4[, lapply(.SD, mean, na.rm = TRUE), by = c(strata1, dom1), .SDcols = c(sup_w1, "poph", "nh")]
+  dom_strata_size <- merge(dom_strata_size, apj_sum, all.x = TRUE, by = c(strata1, dom1))
+  dom_strata_size[is.na(sample100), sample100 := 0]
+  dom_strata_size[, design_weights := poph / nh]
   dom_size <- dom_strata_size[, lapply(.SD, sum, na.rm = TRUE),
                                 keyby = dom1, .SDcols = c("poph", "nh", "sample100")]
-  dom_size[, design_weights:=poph/nh]
+  dom_size[, design_weights := poph / nh]
   sample_siz <- dom_size[, lapply(.SD, sum), .SDcols=c("poph", "nh", "sample100")]
 
   return (list(data = r3,

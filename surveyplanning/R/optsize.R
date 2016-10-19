@@ -3,30 +3,30 @@
 optsize <- function(H, n, poph, s2h = NULL, Rh = NULL, deffh=NULL, dataset = NULL) {
 
   ### Checking
-  if( length(n)!=1 | !any(n>0 | abs(n - round(n)) < .Machine$double.eps)) stop("'n' must be a integer value greater than 0")
+  if( length(n) != 1 | !any(n>0 | abs(n - round(n)) < .Machine$double.eps)) stop("'n' must be a integer value greater than 0")
 
   if(!is.null(dataset)) {
       dataset <- data.table(dataset)
       if(!is.null(H)) {
-          if (min(H %in% names(dataset))!=1) stop("'H' does not exist in 'dataset'!")
-          if (min(H %in% names(dataset))==1) H <- dataset[, H, with=FALSE] }
+          if (min(H %in% names(dataset)) != 1) stop("'H' does not exist in 'dataset'!")
+          if (min(H %in% names(dataset)) == 1) H <- dataset[, H, with = FALSE] }
       if(!is.null(s2h)) {
-          if (min(s2h %in% names(dataset))!=1) stop("'s2h' does not exist in 'dataset'!")
-          if (min(s2h %in% names(dataset))==1) s2h <- dataset[, s2h, with=FALSE] }
+          if (min(s2h %in% names(dataset)) != 1) stop("'s2h' does not exist in 'dataset'!")
+          if (min(s2h %in% names(dataset)) == 1) s2h <- dataset[, s2h, with = FALSE] }
       if(!is.null(poph)) {
-          if (min(poph %in% names(dataset))!=1) stop("'poph' does not exist in 'dataset'!")
-          if (min(poph %in% names(dataset))==1) poph <- dataset[, poph, with=FALSE] }
+          if (min(poph %in% names(dataset)) != 1) stop("'poph' does not exist in 'dataset'!")
+          if (min(poph %in% names(dataset)) == 1) poph <- dataset[, poph, with = FALSE] }
       if(!is.null(Rh)) {
-          if (min(Rh %in% names(dataset))!=1) stop("'Rh' does not exist in 'dataset'!")
-          if (min(Rh %in% names(dataset))==1) Rh <- dataset[, Rh, with=FALSE] }
+          if (min(Rh %in% names(dataset)) != 1) stop("'Rh' does not exist in 'dataset'!")
+          if (min(Rh %in% names(dataset)) == 1) Rh <- dataset[, Rh, with = FALSE] }
       if(!is.null(deffh)) {
-          if (min(deffh %in% names(dataset))!=1) stop("'deffh' does not exist in 'dataset'!")
-          if (min(deffh %in% names(dataset))==1) deffh <- dataset[, deffh, with=FALSE] }
+          if (min(deffh %in% names(dataset)) != 1) stop("'deffh' does not exist in 'dataset'!")
+          if (min(deffh %in% names(dataset)) == 1) deffh <- dataset[, deffh, with = FALSE] }
     }
 
   # s2h
   if (is.null(s2h)) s2h <- rep(1, nrow(H))
-  s2h <- data.table(s2h, check.names=TRUE)
+  s2h <- data.table(s2h, check.names = TRUE)
   m <- ncol(s2h)
   if (any(is.na(s2h))) stop("'s2h' has unknown values")
   if (!all(sapply(s2h, is.numeric))) stop("'s2h' must be numeric values")
@@ -43,7 +43,7 @@ optsize <- function(H, n, poph, s2h = NULL, Rh = NULL, deffh=NULL, dataset = NUL
   poph <- data.frame(poph)
   if (nrow(poph) != nrow(s2h)) stop("'poph' must be equal with 's2h' row count")
   if (ncol(poph) != 1) stop("'poph' must be vector or 1 column data.frame, matrix, data.table")
-  poph <- poph[,1]
+  poph <- poph[, 1]
   if (!is.numeric(poph)) stop("'poph' must be numerical")
   if (any(is.na(poph))) stop("'poph' has unknown values")
 
@@ -72,17 +72,17 @@ optsize <- function(H, n, poph, s2h = NULL, Rh = NULL, deffh=NULL, dataset = NUL
 
   s2h <- data.table(H, s2h)
   ns2h <- names(s2h)
-  s2h <- melt(s2h, id=c(names(H)))
+  s2h <- melt(s2h, id = c(names(H)))
   setnames(s2h, "value", "s2h")
-  resulth <- merge(s2h, resulth, all=TRUE, by=names(H))
+  resulth <- merge(s2h, resulth, all = TRUE, by = names(H))
 
   if (!is.null(deffh)) {
       deffh <- data.table(H, deffh)
       setnames(deffh, names(deffh), ns2h)
-      deffh <- melt(deffh, id=names(H))
+      deffh <- melt(deffh, id = names(H))
       setnames(deffh, "value", "deffh")
-      resulth <- merge(resulth, deffh, all=TRUE, by=c(names(H), "variable"))
-  } else resulth[, deffh:=1]
+      resulth <- merge(resulth, deffh, all = TRUE, by=c(names(H), "variable"))
+  } else resulth[, deffh := 1]
 
   resulth[, pnh := poph * sqrt(s2h * deffh / Rh)]
   resulth[, nh := n * pnh / sum(pnh), by = "variable"]
