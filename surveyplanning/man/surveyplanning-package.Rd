@@ -13,8 +13,8 @@ calculation of optimal sample size allocation.
 \details{
 \tabular{ll}{
 Package: \tab surveyplanning\cr
-Version: \tab 2.0\cr
-Date: \tab 2016-08-01\cr
+Version: \tab 2.2\cr
+Date: \tab 2016-10-19\cr
 Depends: \tab R (>= 3.0.0), data.table (>= 1.9.6) \cr
 License: \tab GPL (>= 2)\cr
 URL: \tab https://github.com/CSBLatvia/surveyplanning/ \cr

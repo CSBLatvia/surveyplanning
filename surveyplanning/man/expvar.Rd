@@ -5,7 +5,7 @@
 \title{Expected precision for the estimates of totals}
 
 \description{
-The function computes expexted precision as variance, standard error, and coefficient of variation for the estimates of totals.
+The function computes expexted precision as variance, standard error, and coefficient of variation for the estimates.
 }
 
 \usage{

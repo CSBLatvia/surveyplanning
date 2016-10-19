@@ -1,7 +1,7 @@
 dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
                                    deffh=NULL, indicator, 
                                    sup_w, sup_cv, min_size=3,
-                                    correction_before=FALSE,
+                                   correction_before=FALSE,
                                    dataset=NULL){
 
   if (!any(is.logical(correction_before))|length(correction_before) != 1)
@@ -115,14 +115,15 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
     if (nrow(Dom) != n) stop("'Dom' and 'Y' must be equal row count")
     if (any(is.na(Dom))) stop("'Dom' has unknown values")
     if (is.null(names(Dom))) stop("'Dom' must be colnames")
-    Dom[, (names(Dom)):=lapply(.SD, as.character)]
+    Dom[, (names(Dom)):= lapply(.SD, as.character)]
   }
 
   poph_sample <- sample100 <- var_est <- s2_Y <- NULL
   apj <- min_apj <- poph <- nh <- index__1 <- NULL
   . <- cv_check <- design_weights <- sum_Y <- NULL
+  cv <- pnh <- vars <- sum_apj <- sum_poph <- NULL
 
-  if (is.null(Dom)) Dom <- data.table(dom=rep(1, n))
+  if (is.null(Dom)) Dom <- data.table(dom = rep(1, n))
 
   r <- data.table(id, Dom, H, Y, Rh, deffh, indicator, sup_w, sup_cv)
 
@@ -136,132 +137,107 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
   indicator1 <- names(indicator)
   sup_w1 <- names(sup_w)
   sup_cv1 <- names(sup_cv)
-  namesr <- names(r)
 
-  dv <- lapply(1:nrow(Dom_agg), function(j) {
+  aa <- r[ , .(poph = .N,
+               s2_Y = var(get(Y1), na.rm = TRUE),
+               sum_Y = sum(as.numeric(get(Y1)), na.rm = TRUE),
+               poph_sample = sum(1 - get(indicator1), na.rm = TRUE),
+               Rh = mean(get(Rh1), na.rm = TRUE),
+               deffh = mean(get(deffh1), na.rm = TRUE),
+               sup_w = mean(get(sup_w1), na.rm = TRUE),
+               sup_cv = mean(get(sup_cv1), na.rm = TRUE)), 
+               keyby = c(dom1, strata1)]
+  setnames(aa, c("Rh"), c(Rh1))
+  aa[is.na(s2_Y), s2_Y:= 0]
+  aa[, poph:= as.numeric(poph)]
+  aa[, apj:= as.numeric(min_size)]
+  aa[, poph_sample:= as.numeric(poph_sample)]
+  aa[apj > poph_sample, apj:= poph_sample]
+  aa[, sample100:= poph - poph_sample]
+  aa[, sum_apj:= as.integer(sum(apj)) - 1, by = dom1]
+  aa[, sum_poph:= sum(poph_sample), by = dom1]
+  aa[, sum_apj:= as.integer(sum(apj)) - 1, by = dom1]
 
-          D <- Dom_agg[j,][rep(1,nrow(Dom)),]
-          d0 <- r[(rowSums(Dom == D) == ncol(Dom))]
-          d1 <- d0[get(indicator1) == 0]
+  a1 <- copy(aa)
+  a1[, cv:=1000]
+  a1[, nh:=sample100]
 
-          #the part of domain, where select all units 100%
-          n_100 <- d0[get(indicator1) == 1, .N]
+  while (nrow(a1[cv > sup_cv]) > 0){
+         a1[cv > sup_cv & poph_sample != 0, sum_apj:= as.integer(sum_apj) + 1]
+         a1[, (c("nh", "cv")):=NULL]
+         a1[poph_sample != 0, pnh := poph * sqrt(s2_Y * deffh / Rh)]
+         a1[poph_sample != 0, nh:= sum_apj * pnh / sum(pnh), by = dom1]
 
-          #the part, where create sample
-          nd <- d0[get(indicator1) == 0, .N]
+         a1[is.na(nh), nh:= 0]
+         a1[, nh:= nh + sample100]
+         a1[nh < min_size, nh:= as.numeric(min_size)]
+         a1[nh > poph, nh:= poph]
+         a1[(poph/nh > sup_w) & (correction_before), nh:= round(poph / sup_w)]
+         a1[(poph/nh > sup_w) & (correction_before), nh:= nh + 1]
 
-         if (nd != 0) {
-                aa <- d0[ , .(poph = .N,
-                              s2_Y = var(get(Y1), na.rm = TRUE),
-                              sum_Y = sum(as.numeric(get(Y1)), na.rm = TRUE),
-                              poph_sample = sum(1 - get(indicator1), na.rm = TRUE),
-                              Rh = mean(get(Rh1), na.rm = TRUE),
-                              deffh = mean(get(deffh1), na.rm = TRUE),
-                              sup_w = mean(get(sup_w1), na.rm = TRUE),
-                              sup_cv = mean(get(sup_cv1), na.rm = TRUE)), keyby = strata1]
-                setnames(aa, c("Rh", "deffh", "sup_w","sup_cv"), c(Rh1, deffh1, sup_w1, sup_cv1))
-                
-                aa[is.na(s2_Y), s2_Y:= 0]
-                aa[, poph:=as.numeric(poph)]
-                aa[, apj:=as.numeric(min_size)]
-                aa[, poph_sample:=as.numeric(poph_sample)]
-                aa[apj>poph_sample, apj:= poph_sample]
-                aa[, sample100:=poph - poph_sample]
+         a1[, vars:=expvarh(s2h=get("s2_Y"), nh=get("nh"), poph=get("poph"), 
+                            Rh = get("Rh"), deffh = get("deffh"))]
+         a1[, cv:= sqrt(sum(vars))/sum(sum_Y) * 100, by=dom1]
+         a1[, vars:=NULL]
+      }             
 
-                A <- aa[, sum(apj)][1]:aa[, sum(poph_sample)][1]
-                l <- length(A)
-                a1 <- copy(aa)
-                a1[, (c("apj", "poph_sample")):=NULL]
+  d <- merge(r, a1[, c(dom1, strata1, "poph", "nh"), with = FALSE], all = TRUE, by = c(dom1, strata1))
+  r3 <- d[, c(names(r), "poph", "nh"), with = FALSE]       
+  setkeyv(r3, names(id))
 
-                for (k in 1:l) {
-                        t1 <- optsize(H=strata1, n=A[k], poph="poph", 
-                                      s2h = "s2_Y", Rh = Rh1, deffh=deffh1,
-                                      dataset = aa[poph_sample!=0]) 
-                        t1 <- t1[, c(strata1, "nh"), with = FALSE][, nh:=round(nh)]
-                        a2 <- merge(a1, t1, all.x = TRUE)
-                        a2[is.na(nh), nh:=0]
-                        a2[, nh:=nh + sample100]
-
-                        a2[nh < min_size, nh:= as.numeric(min_size)]
-                        a2[nh > poph, nh:= poph]
-
-                        a2[(poph/nh > get(sup_w1)) & (correction_before), nh:= round(poph/get(sup_w1))]
-                        a2[(poph/nh > get(sup_w1)) & (correction_before), nh:= nh + 1]
-
-                        sup_cvt <- mean(a2[[sup_cv1]])
-                        as <- expvar(Yh="sum_Y", Zh=NULL, H=strata1, 
-                                     s2h="s2_Y", nh="nh", poph="poph", 
-                                     Rh = Rh1, deffh = deffh1, Dom = NULL,
-                                     dataset = a2)$result
-                         if (any(is.na(as[["cv"]]) | as[["cv"]] < sup_cvt)) break
-                    }
-                d <- merge(d0, a2[, c(strata1, "poph", "nh"), with = FALSE], all = TRUE, by = strata1)
-           } else {
-                   a1 <- d0[, .(poph = .N, nh = .N), by = strata1]
-                   a1[, poph:=as.numeric(poph)]
-                   a1[, nh:=as.numeric(nh)]
-
-                   d <- merge(d0, a1, keyby = strata1, all = TRUE, by = strata1)
-         }
-
-        r3 <- d[, c(namesr, "poph", "nh"), with = FALSE]       
-     })
-
-     r3 <- rbindlist(dv)
-     setkeyv(r3, names(id))
-
-     r3[(poph/nh > get(sup_w1)) & (!correction_before), nh:=round(poph/get(sup_w1))]
-     r3[(poph/nh > get(sup_w1)) & (!correction_before), nh:=nh + 1]
+  r3[(poph/nh > get(sup_w1)) & (!correction_before), nh:=round(poph/get(sup_w1))]
+  r3[(poph/nh > get(sup_w1)) & (!correction_before), nh:=nh + 1]
     
-     a1 <- r3[, .(nh = mean(nh, na.rm = TRUE),
-                  poph = .N,
-                  Rh = mean(get(Rh1), na.rm = TRUE),
-                  deffh = mean(get(deffh1), na.rm = TRUE),
-                  sum_Y = sum(as.numeric(get(Y1)), na.rm = TRUE),
-                  s2_Y = var(get(Y1), na.rm = TRUE)), keyby = c(strata1,  dom1)]
-     a1[is.na(sum_Y), sum_Y:=0]
-     a1[is.na(s2_Y), s2_Y:=0]
-     setnames(a1, c("sum_Y", "Rh", "deffh"), c(Y1, Rh1, deffh1))
+  a1 <- r3[, .(nh = mean(nh, na.rm = TRUE),
+               poph = .N,
+               Rh = mean(get(Rh1), na.rm = TRUE),
+               deffh = mean(get(deffh1), na.rm = TRUE),
+               sum_Y = sum(as.numeric(get(Y1)), na.rm = TRUE),
+               s2_Y = var(get(Y1), na.rm = TRUE)), keyby = c(strata1,  dom1)]
+  a1[is.na(sum_Y), sum_Y:=0]
+  a1[is.na(s2_Y), s2_Y:=0]
+  setnames(a1, c("sum_Y", "Rh", "deffh"), c(Y1, Rh1, deffh1))
      
-     a2 <- expvar(Yh = Y1, H = strata1,
-                  s2h = "s2_Y", nh = "nh",
-                  poph = "poph", Rh= Rh1,
-                  deffh = deffh1, Dom = dom1,
-                  dataset = a1)
-     a1 <- NULL
+  a2 <- expvar(Yh = Y1, H = strata1,
+               s2h = "s2_Y", nh = "nh",
+               poph = "poph", Rh= Rh1,
+               deffh = deffh1, Dom = dom1,
+               dataset = a1)
+  a1 <- NULL
 
-     r4 <- r3[, .(nh = mean(nh, na.rm = TRUE),
-                  poph = .N), keyby = strata1]
+  r4 <- r3[, .(nh = mean(nh, na.rm = TRUE),
+               poph = .N), keyby = strata1]
 
-     # Check is any strata, where nh>Nh
-     test <- r4[nh > poph]
-     if (nrow(test) == 0) test <- 0
+  # Check is any strata, where nh>Nh
+  test <- r4[nh > poph]
+  if (nrow(test) == 0) test <- 0
 
-     # sample size
-     r4 <- copy(r3)
-     r4[, index__1:=1]
-     r4 <- rbind(r4[1], r4)
-     r4[1,(indicator1):=1]
-     r4[1,("index__1"):=0]
+  # sample size
+  r4 <- copy(r3)
+  r4[, index__1:=1]
+  r4 <- rbind(r4[1], r4)
+  r4[1,(indicator1):=1]
+  r4[1,("index__1"):=0]
 
-     apj_sum <- r4[get(indicator1)==1, .(sample100=sum(index__1, na.rm = TRUE)), keyby=c(strata1, dom1)]
+  apj_sum <- r4[get(indicator1)==1, .(sample100=sum(index__1, na.rm = TRUE)), keyby=c(strata1, dom1)]
      
-     ds <- c(strata1, dom1)
-     dom_strata_size <- r4[, lapply(.SD, mean, na.rm = TRUE), by=c(strata1, dom1), .SDcols=c(sup_w1, "poph", "nh")]
-     dom_strata_size <- merge(dom_strata_size, apj_sum, all.x =TRUE, by = c(strata1, dom1))
-     dom_strata_size[is.na(sample100), sample100:=0]
-     dom_strata_size[, design_weights:=poph/nh]
-     dom_size <- dom_strata_size[, lapply(.SD, sum, na.rm = TRUE),
-                                    keyby = dom1, .SDcols = c("poph", "nh", "sample100")]
-     dom_size[, design_weights:=poph/nh]
-     sample_siz <- dom_size[, lapply(.SD, sum), .SDcols=c("poph", "nh", "sample100")]
+  ds <- c(strata1, dom1)
+  dom_strata_size <- r4[, lapply(.SD, mean, na.rm = TRUE), by=c(strata1, dom1), .SDcols=c(sup_w1, "poph", "nh")]
+  dom_strata_size <- merge(dom_strata_size, apj_sum, all.x =TRUE, by = c(strata1, dom1))
+  dom_strata_size[is.na(sample100), sample100:=0]
+  dom_strata_size[, design_weights:=poph/nh]
+  dom_size <- dom_strata_size[, lapply(.SD, sum, na.rm = TRUE),
+                                keyby = dom1, .SDcols = c("poph", "nh", "sample100")]
+  dom_size[, design_weights:=poph/nh]
+  sample_siz <- dom_size[, lapply(.SD, sum), .SDcols=c("poph", "nh", "sample100")]
 
-     return (list(data = r3,
-                  nh_larger_then_Nh = test,
-                  dom_strata_size = dom_strata_size,
-                  dom_size = dom_size,
-                  size = sample_siz,
-                  dom_strata_expected_precision = a2$resultDomH,
-                  dom_expected_precision = a2$resultDom,
-                  total_expected_precision = a2$result))
+  return (list(data = r3,
+               nh_larger_then_Nh = test,
+               dom_strata_size = dom_strata_size,
+               dom_size = dom_size,
+               size = sample_siz,
+               dom_strata_expected_precision = a2$resultDomH,
+               dom_expected_precision = a2$resultDom,
+               total_expected_precision = a2$result))
  }
+
