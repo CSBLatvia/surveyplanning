@@ -1,8 +1,6 @@
 ##################
 
-optsize <- function(H, n, poph, s2h = NULL,
-                    Rh = NULL, deffh = NULL,
-                    fullsurveyh = NULL, dataset = NULL) {
+optsize <- function(H, n, poph, s2h = NULL, Rh = NULL, deffh = NULL, fullsampleh = NULL, dataset = NULL) {
 
   ### Checking
   if( length(n) != 1 | !any(n>0 | abs(n - round(n)) < .Machine$double.eps)) stop("'n' must be a integer value greater than 0")
@@ -24,6 +22,9 @@ optsize <- function(H, n, poph, s2h = NULL,
       if(!is.null(deffh)) {
           if (min(deffh %in% names(dataset)) != 1) stop("'deffh' does not exist in 'dataset'!")
           if (min(deffh %in% names(dataset)) == 1) deffh <- dataset[, deffh, with = FALSE] }
+      if(!is.null(fullsampleh)) {
+          if (min(fullsampleh %in% names(dataset)) != 1) stop("'fullsampleh' does not exist in 'dataset'!")
+          if (min(fullsampleh %in% names(dataset)) == 1) fullsampleh <- dataset[, fullsampleh, with = FALSE] }
     }
 
   # s2h
@@ -58,6 +59,17 @@ optsize <- function(H, n, poph, s2h = NULL,
   if (!is.numeric(Rh)) stop("'Rh' must be numerical")
   if (any(is.na(Rh))) stop("'Rh' has unknown values")
 
+  # fullsampleh
+  if (is.null(fullsampleh)) fullsampleh <- rep(0, length(Rh))
+  fullsampleh <- data.frame(fullsampleh)
+  if (nrow(fullsampleh) != nrow(s2h)) stop("'fullsampleh' must be equal with 's2h' row count")
+  if (ncol(fullsampleh) != 1) stop("'fullsampleh' must be vector or 1 column data.frame, matrix, data.table")
+  fullsampleh <- fullsampleh[, 1]
+  if (!is.numeric(fullsampleh)) stop("'fullsampleh' must be numerical")
+  if (any(is.na(fullsampleh))) stop("'fullsampleh' has unknown values")
+  if (any(!(fullsampleh %in% c(0, 1)))) stop("'fullsampleh' must be two values: 0 or 1")
+
+
   # deffh
   if (!is.null(deffh)) {
     deffh <- data.table(deffh, check.names=TRUE)
@@ -70,7 +82,9 @@ optsize <- function(H, n, poph, s2h = NULL,
 
   variable <- pnh <- nh <- NULL
 
-  resulth <- data.table(H, Rh=Rh, poph=poph)
+  resulth <- data.table(H, Rh = Rh, poph = poph, fullsampleh = fullsampleh)
+  nh_cor <- n - resulth[get("fullsampleh") == 1, sum(poph)]
+  if  (nh_cor < 0) stop("'n' need larger!")
 
   s2h <- data.table(H, s2h)
   ns2h <- names(s2h)
@@ -83,11 +97,12 @@ optsize <- function(H, n, poph, s2h = NULL,
       setnames(deffh, names(deffh), ns2h)
       deffh <- melt(deffh, id = names(H))
       setnames(deffh, "value", "deffh")
-      resulth <- merge(resulth, deffh, all = TRUE, by=c(names(H), "variable"))
+      resulth <- merge(resulth, deffh, all = TRUE, by = c(names(H), "variable"))
   } else resulth[, deffh := 1]
 
-  resulth[, pnh := poph * sqrt(s2h * deffh / Rh)]
-  resulth[, nh := n * pnh / sum(pnh), by = "variable"]
-  resulth[, pnh:=NULL]
+  resulth[, pnh := ifelse(fullsampleh == 0, poph * sqrt(s2h * deffh / Rh), 0)]
+  resulth[fullsampleh == 0, nh := nh_cor * pnh / sum(pnh), by = "variable"]
+  resulth[fullsampleh == 1, nh := poph]
+  resulth[, pnh := NULL]
   return(resulth)
 }
