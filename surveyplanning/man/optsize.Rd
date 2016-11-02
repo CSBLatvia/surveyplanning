@@ -8,7 +8,7 @@ The function computes optimal sample size allocation over strata.
 }
 
 \usage{
-optsize(H, n, poph, s2h = NULL, Rh = NULL, deffh=NULL, dataset = NULL)
+optsize(H, n, poph, s2h = NULL, Rh = NULL, deffh = NULL, fullsurveyh = NULL, dataset = NULL)
 }
 
 \arguments{
@@ -24,6 +24,8 @@ optsize(H, n, poph, s2h = NULL, Rh = NULL, deffh=NULL, dataset = NULL)
 \item{Rh}{The expected response rate in each stratum (optional). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.}
 
 \item{deffh}{The expected design effect for the estimate of variable (optional). If not defined, it is assumed to be 1 for each variable in each stratum. If is defined, then variables is defined the same arrangement as \code{Yh}. Object convertible to \code{data.table}, variable name as character vector, or column numbers.}
+
+\item{fullsurveyh}{Variable for detection fully surveyed stratum (optinal). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.}
 
 \item{dataset}{Optional survey data object convertible to \code{data.table} with one row for each stratum.}
 }
@@ -53,13 +55,19 @@ If \code{Rh} is not defined, the sample allocation will be calculated as Neyman 
 
 \examples{
 
-data <- data.table(H=1:3,
-                   s2h=10*runif(3), s2h2=10*runif(3),
-                   poph=8*1:3, Rh=rep(1,3), dd=c(1,1,1))
+data <- data.table(H = 1 : 3,
+                   s2h=10 * runif(3),
+                   s2h2 = 10 * runif(3),
+                   poph = 8 * 1 : 3,
+                   Rh = rep(1, 3),
+                   dd = c(1, 1, 1))
 
-vars <- optsize(H="H", s2h=c("s2h", "s2h2"),
-                n=10, poph="poph",
-                Rh="Rh", dataset = data)
+vars <- optsize(H = "H",
+                s2h=c("s2h", "s2h2"),
+                n = 10, poph = "poph",
+                Rh = "Rh",
+                fullsurveyh = NULL, 
+                dataset = data)
 vars
 }
 

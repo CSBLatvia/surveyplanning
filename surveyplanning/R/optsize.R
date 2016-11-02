@@ -1,6 +1,8 @@
 ##################
 
-optsize <- function(H, n, poph, s2h = NULL, Rh = NULL, deffh=NULL, dataset = NULL) {
+optsize <- function(H, n, poph, s2h = NULL,
+                    Rh = NULL, deffh = NULL,
+                    fullsurveyh = NULL, dataset = NULL) {
 
   ### Checking
   if( length(n) != 1 | !any(n>0 | abs(n - round(n)) < .Machine$double.eps)) stop("'n' must be a integer value greater than 0")

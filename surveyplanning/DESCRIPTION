@@ -1,9 +1,9 @@
 Package: surveyplanning
 Type: Package
 Title: Survey Planning Tools
-Version: 2.2
-Date: 2016-10-19
-Depends: R (>= 3.0.0), data.table (>= 1.9.6)
+Version: 2.5
+Date: 2016-11-02
+Depends: R (>= 3.0.0), data.table (>= 1.9.6), laeken
 Authors@R: c(person("Juris", "Breidaks", email = "rcsb@csb.gov.lv",  role = c("aut", "cre")), person("Martins", "Liberts", role = "aut"), person("Janis", "Jukams", role = "aut"))
 Maintainer: Juris Breidaks <rcsb@csb.gov.lv>
 Description: Tools for sample survey planning, including sample size calculation, estimation of expected precision for the estimates of totals, and calculation of optimal sample size allocation.

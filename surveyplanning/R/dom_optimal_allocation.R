@@ -162,16 +162,17 @@ dom_optimal_allocation <- function(id, Dom, H, Y, Rh=NULL,
 
   while (nrow(a1[cv > sup_cv]) > 0){
          a1[(cv > sup_cv) & (poph_sample != 0), sum_apj := sum_apj + 1]
-         a1[, (c("nh", "cv")):=NULL]
+         a1[, (c("nh", "cv")) := NULL]
          a1[poph_sample != 0, pnh := poph * sqrt(s2_Y * deffh / Rh)]
          a1[poph_sample != 0, nh := sum_apj * pnh / sum(pnh), by = dom1]
 
          a1[is.na(nh), nh := 0]
+         a1[, nh := round(nh)]
          a1[, nh := nh + sample100]
          a1[nh < min_size, nh := as.numeric(min_size)]
          a1[nh > poph, nh := poph]
-         a1[(poph/nh > sup_w) & (correction_before), nh:= round(poph / sup_w)]
-         a1[(poph/nh > sup_w) & (correction_before), nh:= nh + 1]
+         a1[(poph/nh > sup_w) & (correction_before), nh := round(poph / sup_w)]
+         a1[(poph/nh > sup_w) & (correction_before), nh := nh + 1]
 
          a1[, vars := expvarh(s2h = get("s2_Y"), nh = get("nh"), poph = get("poph"), 
                               Rh = get("Rh"), deffh = get("deffh"))]

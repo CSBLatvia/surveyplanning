@@ -7,4 +7,5 @@ export(ratio_dom_optimal_allocation)
 export(s2)
 
 import(data.table)
+import(laeken)
 importFrom("stats", "var")

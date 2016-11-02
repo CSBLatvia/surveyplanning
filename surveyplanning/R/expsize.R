@@ -107,7 +107,7 @@ expsize <- function(Yh, H, s2h, poph, Rh = NULL, deffh = NULL, CVh,
   setnames(s2h, names(s2h), names(Yh))
   s2h <- melt(data.table(H, s2h), id=c(names(H)))
   setnames(s2h, "value", "s2h")
-  resulth <- merge(s2h, resulth, all = TRUE, by = c(names(H), "variable"))
+  resulth <- merge(s2h, resulth, all = TRUE, by = c(names(H)))
 
   if (!is.null(deffh)) {
     setnames(deffh, names(deffh), names(Yh))

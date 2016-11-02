@@ -2,7 +2,7 @@ expvarh <- function(s2h, nh, poph, Rh = 1, deffh = 1) {
                      nrh <- round(nh * Rh)
                      nrh <- ifelse(nrh < 1, 1, nrh)
                      var <- poph ^ 2 * (1 - nrh / poph) / nrh * s2h * deffh
-                     var
+                     return(var)
   }
 
 expvar <- function(Yh, Zh=NULL, H, s2h, nh, poph, 

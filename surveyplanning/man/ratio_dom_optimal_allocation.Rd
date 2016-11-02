@@ -16,7 +16,7 @@ ratio_dom_optimal_allocation(H, Dom, poph, Rh, deffh,
 
 \arguments{
 
-\item{H}{The unit stratum variable. One dimensional object convertible to one-column \code{data.table} or variable name as character, column number.}
+\item{H}{The stratum variable. One dimensional object convertible to one-column \code{data.table} or variable name as character, column number.}
 
 \item{Dom}{Variables used to define population domains. An object convertible to \code{data.table} or variable names as character vector, column numbers.}
 
@@ -66,11 +66,15 @@ ratio_dom_optimal_allocation(H, Dom, poph, Rh, deffh,
 
 \examples{
 
-#vars <- dom_optimal_allocation(id, dom, H, Y, indicator, 
-#                                         sup_w, sup_cv, min_size=3,
-#                                         correction_before=FALSE,
-#                                         dataset=data)
-#vars
+data(eusilc)
+eusilc <- data.table(eusilc)
+data <- eusilc[, .(poph = sum(db090)), by = c("db040")]
+data[, dom := "1"]
+res <- ratio_dom_optimal_allocation(H = "db040", Dom = "dom",
+                                    poph = "poph", Rh = NULL, 
+                                    deffh = NULL, se_max = 0.5,
+                                    prop = 0.5, min_size = 3,
+                                    step = 1, dataset = data)
 }
 
 \keyword{surveyplanning}

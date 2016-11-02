@@ -1,5 +1,6 @@
 
-ratio_dom_optimal_allocation <- function(H, Dom, poph, Rh, deffh,
+ratio_dom_optimal_allocation <- function(H, Dom, poph, 
+                                         Rh = NULL, deffh = NULL,
                                          se_max = 0.5, prop = 0.5,
                                          min_size = 3, step = 1, 
                                          dataset = NULL) {
@@ -21,19 +22,22 @@ ratio_dom_optimal_allocation <- function(H, Dom, poph, Rh, deffh,
       if (!is.null(H)) {
           if (min(H %in% names(dataset)) != 1) stop("'H' does not exist in 'dataset'!")
           if (min(H %in% names(dataset)) == 1) H <- dataset[, H, with = FALSE] }
+      if(!is.null(poph)) {
+        if (min(poph %in% names(dataset))!=1) stop("'poph' does not exist in 'dataset'!")
+        if (min(poph %in% names(dataset))==1) poph <- dataset[, poph, with=FALSE] }
       if(!is.null(Rh)) {
           if (min(Rh %in% names(dataset))!=1) stop("'Rh' does not exist in 'dataset'!")
           if (min(Rh %in% names(dataset))==1) Rh <- dataset[, Rh, with=FALSE] }
       if(!is.null(deffh)) {
           if (min(deffh %in% names(dataset))!=1) stop("'deffh' does not exist in 'dataset'!")
           if (min(deffh %in% names(dataset))==1) deffh <- dataset[, deffh, with=FALSE] }
-   }
+  }
 
   # poph
   poph <- data.table(poph)
   if (ncol(poph) != 1) stop("'poph' must be vector or 1 column data.frame, matrix, data.table")
-  if (!is.numeric(poph[[1]])) stop("'poph' must be numerical")
   if (any(is.na(poph[[1]]))) stop("'poph' has unknown values")
+  if (!is.numeric(poph[[1]])) stop("'poph' must be numerical")
   n <- nrow(poph)
 
   H <- data.table(H)
@@ -79,7 +83,7 @@ ratio_dom_optimal_allocation <- function(H, Dom, poph, Rh, deffh,
   datah <- data.table(H, Dom, poph, Rh, deffh)
   datah[, s2h := ifelse(poph == 1, 0, poph / (poph - 1) * prop * (1 - prop))]
   
-  datah[, NS := poph * sqrt(s2)]
+  datah[, NS := poph * sqrt(s2h)]
   datah[, domNS := sum(NS), by = nDom]
   datah[, pop_Dom := sum(poph), by = nDom]
     

@@ -8,10 +8,11 @@ The function computes optimal sample size allocation over strata and domain for 
 }
 
 \usage{
-dom_optimal_allocation(id, Dom, H, Y, Rh=NULL, deffh=NULL,
-                               indicator, sup_w, sup_cv,
-                               min_size=3, correction_before=FALSE,
-                               dataset=NULL)
+dom_optimal_allocation(id, Dom, H, Y, Rh = NULL,
+                       deffh = NULL, indicator,
+                       sup_w, sup_cv, min_size = 3,
+                       correction_before = FALSE,
+                       dataset = NULL)
 }
 
 \arguments{
@@ -126,12 +127,23 @@ dom_optimal_allocation(id, Dom, H, Y, Rh=NULL, deffh=NULL,
 
 \examples{
 
-data(eusilc)
+data(ses)
 
-#vars <- dom_optimal_allocation(id, dom, H, Y, indicator, 
-#                                         sup_w, sup_cv, min_size=3,
-#                                         correction_before=FALSE,
-#                                         dataset=data)
+data <- data.table(ses)
+data[, H := paste(location, NACE1, size, sep = "_")]
+data[, id := .I]
+data[, full := 0]
+data[, sup_cv := 10]
+data[, sup_w := 20]
+#vars <- dom_optimal_allocation(id = "id", dom = "sex",
+#                                H = "H", Y = "earnings",
+#                                indicator = "full", 
+#                                sup_w = "sup_w",
+#                                sup_cv = "sup_cv",
+#                                min_size = 3,
+#                                correction_before = FALSE,
+#                                dataset = data)
+#                                dataset=data)
 #vars
 }
 
