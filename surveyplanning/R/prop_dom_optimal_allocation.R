@@ -1,5 +1,5 @@
 
-ratio_dom_optimal_allocation <- function(H, Dom, poph, 
+prop_dom_optimal_allocation <- function(H, Dom, poph, 
                                          Rh = NULL, deffh = NULL,
                                          se_max = 0.5, prop = 0.5,
                                          min_size = 3, step = 1, 
