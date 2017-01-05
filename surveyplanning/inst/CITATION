@@ -1,13 +1,13 @@
-citHeader("To cite the surveyplanning package in publications please use:")
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("R package version %s", meta$Version)
 
-citEntry(
-    entry="misc",
-    author="Juris Breidaks, Martins Liberts, Janis Jukams",
-    year=2016,
-    title="surveyplanning: Survey Planning Tools",
-    note="R package version 0.2.6",
-    organization="CSB",
-    address="Riga, Latvia",
-    textVersion="J. Breidaks, M. Liberts, J. Jukams (2016) \"Survey Planning Tools\". R package version 0.2.4, CSB, Latvia."
-    )
-
+bibentry(bibtype = "Manual",
+         title = "{surveyplanning}: Survey planning tools",
+         author = c(person("Juris", "Breidaks"),
+                    person("Martins", "Liberts"),
+                    person("Janis", "Jukams")),
+         year = year,
+         note = note,
+         institution = "Central Statistical Bureau of Latvia",
+         address = "Riga, Latvia",
+         url = "https://cran.r-project.org/package=surveyplanning")
