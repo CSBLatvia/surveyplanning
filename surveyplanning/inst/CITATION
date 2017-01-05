@@ -10,4 +10,4 @@ bibentry(bibtype = "Manual",
          note = note,
          institution = "Central Statistical Bureau of Latvia",
          address = "Riga, Latvia",
-         url = "https://cran.r-project.org/package=surveyplanning")
+         url = "https://csblatvia.github.io/surveyplanning/")

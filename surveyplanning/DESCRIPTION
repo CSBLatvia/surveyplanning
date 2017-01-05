@@ -10,7 +10,7 @@ Description: Tools for sample survey planning, including sample size calculation
 License: GPL (>= 2)
 Encoding: latin1
 Repository: CRAN
-URL: https://github.com/CSBLatvia/surveyplanning/
+URL: https://csblatvia.github.io/surveyplanning/
 BugReports: https://github.com/CSBLatvia/surveyplanning/issues/
 NeedsCompilation: yes
 
