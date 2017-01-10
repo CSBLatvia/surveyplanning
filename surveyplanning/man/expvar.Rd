@@ -9,7 +9,10 @@ The function computes expexted precision as variance, standard error, and coeffi
 }
 
 \usage{
-expvar(Yh, Zh=NULL, H, s2h, nh, poph, Rh = NULL, deffh = NULL, Dom = NULL, dataset = NULL)
+expvar(Yh, Zh = NULL, H, s2h,
+       nh, poph, Rh = NULL,
+       deffh = NULL, Dom = NULL,
+       dataset = NULL)
 }
 
 \arguments{

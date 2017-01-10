@@ -8,10 +8,13 @@ The function computes optimal sample size allocation over strata and domain for 
 }
 
 \usage{
-prop_dom_optimal_allocation(H, Dom, poph, Rh, deffh,
-                             se_max = 0.5, prop = 0.5,
-                             min_size = 3, step = 1,
-                             dataset = NULL)
+prop_dom_optimal_allocation(H, Dom, poph,
+                            Rh, deffh,
+                            se_max = 0.5,
+                            prop = 0.5,
+                            min_size = 3,
+                            step = 1,
+                            dataset = NULL)
 }
 
 \arguments{

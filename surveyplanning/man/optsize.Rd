@@ -8,7 +8,12 @@ The function computes optimal sample size allocation over strata.
 }
 
 \usage{
-optsize(H, n, poph, s2h = NULL, Rh = NULL, deffh = NULL, fullsampleh = NULL, dataset = NULL)
+optsize(H, n, poph,
+        s2h = NULL,
+        Rh = NULL,
+        deffh = NULL,
+        fullsampleh = NULL,
+        dataset = NULL)
 }
 
 \arguments{

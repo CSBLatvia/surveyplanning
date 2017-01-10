@@ -1,9 +1,9 @@
 
 prop_dom_optimal_allocation <- function(H, Dom, poph, 
-                                         Rh = NULL, deffh = NULL,
-                                         se_max = 0.5, prop = 0.5,
-                                         min_size = 3, step = 1, 
-                                         dataset = NULL) {
+                                        Rh = NULL, deffh = NULL,
+                                        se_max = 0.5, prop = 0.5,
+                                        min_size = 3, step = 1, 
+                                        dataset = NULL) {
   
   if (length(se_max) != 1 | any(!is.numeric(se_max) | se_max <= 0)) {
                   stop("'se_max' must be a numeric value larger than 0")  }

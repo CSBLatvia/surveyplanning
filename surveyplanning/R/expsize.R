@@ -1,4 +1,6 @@
-expsize <- function(Yh, H, s2h, poph, Rh = NULL, deffh = NULL, CVh,
+expsize <- function(Yh, H, s2h, poph,
+                    Rh = NULL,
+                    deffh = NULL, CVh,
                     dataset = NULL) {
 
   ### Checking

@@ -8,6 +8,6 @@ citEntry(
     note="R package version 0.2.6",
     organization="CSB",
     address="Riga, Latvia",
-    textVersion="J. Breidaks, M. Liberts, J. Jukams (2016) \"Survey Planning Tools\". R package version 0.2.4, CSB, Latvia."
+    textVersion="J. Breidaks, M. Liberts, J. Jukams (2016) \"Survey Planning Tools\". R package version 0.2.6, CSB, Latvia."
     )
 
