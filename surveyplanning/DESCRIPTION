@@ -2,7 +2,7 @@ Package: surveyplanning
 Type: Package
 Title: Survey Planning Tools
 Version: 2.6
-Date: 2016-12-08
+Date: 2016-12-07
 Depends: R (>= 3.0.0), data.table (>= 1.9.6), laeken
 Authors@R: c(person("Juris", "Breidaks", email = "rcsb@csb.gov.lv",  role = c("aut", "cre")), person("Martins", "Liberts", role = "aut"), person("Janis", "Jukams", role = "aut"))
 Maintainer: Juris Breidaks <rcsb@csb.gov.lv>
@@ -10,7 +10,6 @@ Description: Tools for sample survey planning, including sample size calculation
 License: GPL (>= 2)
 Encoding: latin1
 Repository: CRAN
-URL: https://github.com/CSBLatvia/surveyplanning/
+URL: https://csblatvia.github.io/surveyplanning/
 BugReports: https://github.com/CSBLatvia/surveyplanning/issues/
 NeedsCompilation: yes
-

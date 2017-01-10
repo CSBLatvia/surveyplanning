@@ -1,3 +1,4 @@
+
 Functions for sample survey planning.
 
 ## Installation ##
@@ -7,4 +8,4 @@ install.packages("surveyplanning")
 
 # Development version from github
 library(devtools)
-install_github("CSBLatvia/surveyplanning")
+install_github("CSBLatvia/surveyplanning/surveyplanning")
