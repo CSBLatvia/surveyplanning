@@ -1,8 +1,9 @@
 
-prop_dom_optimal_allocation <- function(H, Dom, poph, 
-                                        Rh = NULL, deffh = NULL,
+prop_dom_optimal_allocation <- function(H, Dom, pop = NULL, 
+                                        R = NULL, deff = NULL,
                                         se_max = 0.5, prop = 0.5,
-                                        min_size = 3, step = 1, 
+                                        min_size = 3, step = 1,
+                                        unit_level = TRUE,
                                         dataset = NULL) {
   
   if (length(se_max) != 1 | any(!is.numeric(se_max) | se_max <= 0)) {
@@ -22,70 +23,80 @@ prop_dom_optimal_allocation <- function(H, Dom, poph,
       if (!is.null(H)) {
           if (min(H %in% names(dataset)) != 1) stop("'H' does not exist in 'dataset'!")
           if (min(H %in% names(dataset)) == 1) H <- dataset[, H, with = FALSE] }
-      if(!is.null(poph)) {
-        if (min(poph %in% names(dataset))!=1) stop("'poph' does not exist in 'dataset'!")
-        if (min(poph %in% names(dataset))==1) poph <- dataset[, poph, with=FALSE] }
-      if(!is.null(Rh)) {
-          if (min(Rh %in% names(dataset))!=1) stop("'Rh' does not exist in 'dataset'!")
-          if (min(Rh %in% names(dataset))==1) Rh <- dataset[, Rh, with=FALSE] }
-      if(!is.null(deffh)) {
-          if (min(deffh %in% names(dataset))!=1) stop("'deffh' does not exist in 'dataset'!")
-          if (min(deffh %in% names(dataset))==1) deffh <- dataset[, deffh, with=FALSE] }
+      if(!is.null(pop)) {
+        if (min(pop %in% names(dataset)) != 1) stop("'pop' does not exist in 'dataset'!")
+        if (min(pop %in% names(dataset)) == 1) pop <- dataset[, pop, with = FALSE] }
+      if(!is.null(R)) {
+          if (min(R %in% names(dataset)) != 1) stop("'R' does not exist in 'dataset'!")
+          if (min(R %in% names(dataset)) == 1) R <- dataset[, R, with = FALSE] }
+      if(!is.null(deff)) {
+          if (min(deff %in% names(dataset)) != 1) stop("'deff' does not exist in 'dataset'!")
+          if (min(deff %in% names(dataset)) == 1) deff <- dataset[, deff, with = FALSE] }
   }
 
-  # poph
-  poph <- data.table(poph)
-  if (ncol(poph) != 1) stop("'poph' must be vector or 1 column data.frame, matrix, data.table")
-  if (any(is.na(poph[[1]]))) stop("'poph' has unknown values")
-  if (!is.numeric(poph[[1]])) stop("'poph' must be numerical")
-  n <- nrow(poph)
-
   H <- data.table(H)
-  if (nrow(H) != n) stop("'H' length must be equal with 'poph' row count")
   if (ncol(H) != 1) stop("'H' must be 1 column data.frame, matrix, data.table")
   if (any(is.na(H))) stop("'H' has unknown values")
   if (is.null(names(H))) stop("'H' must be colnames")
+  n <- nrow(H)
 
-  if (is.null(Rh)) Rh <- rep(1, n)
-  Rh <- data.frame(Rh)
-  if (nrow(Rh) != n) stop("'Rh' must be equal with 'poph' row count")
-  if (ncol(Rh) != 1) stop("'Rh' must be vector or 1 column data.frame, matrix, data.table")
-  Rh <- Rh[, 1]
-  if (!is.numeric(Rh)) stop("'Rh' must be numerical")
-  if (any(is.na(Rh))) stop("'Rh' has unknown values")
+  if (is.null(R)) R <- rep(1, n)
+  R <- data.frame(R)
+  if (anyNA(R)) stop("'R' has unknown values")
+  if (nrow(R) != n) stop("'R' and 'H' must be equal row count")
+  if (ncol(R) != 1) stop("'R' must be vector or 1 column data.frame, matrix, data.table")
+  R <- R[, 1]
+  if (!is.numeric(R)) stop("'R' must be numerical")
 
-  # deffh
-  if (is.null(deffh)) deffh <- rep(1, n)
-  deffh <- data.table(deffh, check.names = TRUE)
-  if (nrow(deffh) != n) stop("'deffh' length must be equal with 'poph' row count")
-  if (ncol(deffh) != ncol(poph)) stop("'deffh' and 'poph' must be equal column count")
-  if (any(is.na(deffh))) stop("'deffh' has unknown values")
-  if (!all(sapply(deffh, is.numeric))) stop("'deffh' must be numeric values")
-  if (is.null(names(deffh))) stop("'deffh' must be colnames")
-
+  # deff
+  if (is.null(deff)) deff <- rep(1, n)
+  deff <- data.table(deff, check.names = TRUE)
+  if (!all(sapply(deff, is.numeric))) stop("'deff' must be numeric values")
+  if (ncol(deff) != 1) stop("'deff' must be vector or 1 column data.frame, matrix, data.table")
+  if (nrow(deff) != n) stop("'deff' and 'H' must be equal row count")
+  if (any(is.na(deff))) stop("'deff' has unknown values")
+  deff <- deff[, 1]
+  
+  if (is.null(Dom)) stop("'Dom' must be defined")
   Dom <- data.table(Dom)
   if (any(duplicated(names(Dom)))) 
          stop("'Dom' are duplicate column names: ", 
                paste(names(Dom)[duplicated(names(Dom))], collapse = ","))
-  if (nrow(Dom) != n) stop("'Dom' and 'poph' must be equal row count")
+  if (nrow(Dom) != n) stop("'Dom' and 'H' must be equal row count")
   if (any(is.na(Dom))) stop("'Dom' has unknown values")
   if (is.null(names(Dom))) stop("'Dom' must be colnames")
   Dom[, (names(Dom)) := lapply(.SD, as.character)]
+ 
+  datah <- data.table(H, Dom)
+
+  # pop
+  if (unit_level) { if (!is.null(pop)) stop("'pop' must be NULL")
+               } else {pop <- data.table(pop)
+                       if (ncol(pop) != 1) stop("'pop' must be vector or 1 column data.frame, matrix, data.table")
+                       if (nrow(pop) != n) stop("'pop' and 'H' must be equal row count")
+                       if (any(is.na(pop[[1]]))) stop("'pop' has unknown values")
+                       if (!is.numeric(pop[[1]])) stop("'pop' must be numerical") 
+                       pop <- pop[[1]]
+                      } 
+
 
   s2h <- NS <- domNS <- pop_Dom <- se <- n_neyman <- NULL
   sample_size <- nrh <- strata_var <- dom_var <- NULL
-  sample_size_Dom <- pop <- . <- NULL
+  sample_size_Dom <- aggr_tot <- . <- NULL
 
-  nRh <- names(Rh)
-  ndeffh <- names(Rh)
   nDom <- names(Dom)
+
+  datah <- data.table(datah, R, deff)
+  if (unit_level) {
+            datah <- datah[, .(deff = mean(deff), R = mean(R), pop = .N), by = c(names(H), nDom)]
+                } else datah <- data.table(datah, pop)
+
+  datah[, pop_Dom := sum(pop), by = nDom]
+
+  datah[, s2h := ifelse(pop == 1, 0, pop / (pop - 1) * prop * (1 - prop))]
   
-  datah <- data.table(H, Dom, poph, Rh, deffh)
-  datah[, s2h := ifelse(poph == 1, 0, poph / (poph - 1) * prop * (1 - prop))]
-  
-  datah[, NS := poph * sqrt(s2h)]
+  datah[, NS := pop * sqrt(s2h)]
   datah[, domNS := sum(NS), by = nDom]
-  datah[, pop_Dom := sum(poph), by = nDom]
     
   datah[, n := 0]
   datah[, se := 1]
@@ -93,16 +104,18 @@ prop_dom_optimal_allocation <- function(H, Dom, poph,
   while (any(datah$se > se_max)){      
       datah[se > se_max, n := n + step]
       datah[se > se_max, n_neyman := ifelse(domNS != 0, n * (NS / domNS), 0)]     
-      datah[se > se_max, sample_size := pmin(pmax(min_size, trunc(n_neyman)), poph)]     
-      datah[se > se_max, nrh := round(sample_size * Rh)]
-      datah[se > se_max, strata_var := poph ^ 2 * (1 - nrh / poph ) / nrh * s2h * deffh]
+      datah[se > se_max, sample_size := pmin(pmax(min_size, trunc(n_neyman)), pop)]     
+      datah[se > se_max, nrh := round(sample_size * R)]
+      datah[se > se_max, strata_var := pop ^ 2 * (1 - nrh / pop ) / nrh * s2h * deff]
       datah[se > se_max, dom_var := sum(strata_var), by = nDom]
       datah[se > se_max, se := sqrt(dom_var) / pop_Dom]
    }
 
-  aggr_Dom <- datah[, .(pop_Dom = mean(pop_Dom), sample_size_Dom = sum(sample_size)), keyby = nDom]
-  aggr_Dom[, sample_size := sum(sample_size_Dom)][, pop := sum(pop_Dom)]
+  aggr_Dom <- datah[, .(pop_Dom = mean(pop),
+                        sample_size_Dom = sum(sample_size)), keyby = c(names(H), nDom)]
+  aggr_tot <- aggr_Dom[, .(pop_size = sum(pop_Dom),
+                           sample_size = sum(sample_size_Dom))]
   
-  list(datah = datah, aggr_Dom = aggr_Dom[])
+  list(datah = datah[], aggr_Dom = aggr_Dom[], aggr_tot = aggr_tot)
   
  }
