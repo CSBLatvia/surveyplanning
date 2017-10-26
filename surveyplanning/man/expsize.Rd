@@ -33,7 +33,7 @@ expsize(Yh, H, s2h, poph, Rh = NULL, deffh = NULL, CVh, dataset = NULL)
 
 \value{
 
-A \code{data.table} is returned by the function, whith variables:
+A \code{data.table} is returned by the function, with variables:
 
        \code{H} - stratum, \cr
        \code{variable} - the name of variable of interest, \cr

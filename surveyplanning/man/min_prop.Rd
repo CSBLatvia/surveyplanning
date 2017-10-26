@@ -1,0 +1,49 @@
+
+\name{min_prop}
+
+\alias{min_prop}
+
+\title{Minimal proportion for the given relative margin of error}
+
+\description{
+The function computes minimal proportion for the given relative margin of error. The calculation takes into sample size, population size,
+margin of error, expected response rate and design effect.
+}
+
+\usage{
+min_prop(n, pop, RMoE, confidence = .95,
+         R = 1, deff_sam = 1, deff_est = 1)
+}
+
+\arguments{
+\item{n}{The expected sample size.}
+
+\item{pop}{Population size.}
+
+\item{RMoE}{The expected relative margin of error.}
+
+\item{confidence}{Optional positive value for confidence interval. This variable by default is 0.95.}
+
+\item{R}{The expected response rate (optional). If not defined, it is assumed to be 1 (full-response).}
+
+\item{deff_sam}{The expected design effect of sample design for the estimates (optional). If not defined, it is assumed to be 1.}
+
+\item{deff_est}{The estimated design effect of estimator for the estimates (optional). If not defined, it is assumed to be 1.}
+
+}
+
+\value{
+The estimate of minimal proportion for the given relative margin of error.
+}
+
+
+\examples{
+
+min_prop(n = 100, pop = 1000, RMoE = 0.1)
+
+}
+
+\seealso{
+ \code{\link{expvar}}, \code{\link{optsize}}, \code{\link{MoE_P}}}
+
+\keyword{surveyplanning}

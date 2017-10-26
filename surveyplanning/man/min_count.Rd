@@ -1,0 +1,65 @@
+
+\name{min_count}
+
+\alias{min_count}
+
+\title{Minimal count of respondents for the given relative margin of error}
+
+\description{
+The function computes minimal proportion for the given relative margin of error. The calculation takes into sample size, population size,
+margin of error, expected response rate and design effect.
+}
+
+\usage{
+min_count(n, pop, RMoE, confidence = .95,
+          R = 1, deff_sam = 1, deff_est = 1)
+}
+
+\arguments{
+\item{n}{The expected sample size.}
+
+\item{pop}{Population size.}
+
+\item{RMoE}{The expected relative margin of error.}
+
+\item{confidence}{Optional positive value for confidence interval. This variable by default is 0.95.}
+
+\item{R}{The expected response rate (optional). If not defined, it is assumed to be 1 (full-response).}
+
+\item{deff_sam}{The expected design effect of sample design for the estimates (optional). If not defined, it is assumed to be 1.}
+
+\item{deff_est}{The estimated design effect of estimator for the estimates (optional). If not defined, it is assumed to be 1.}
+
+}
+
+\value{
+The estimate of minimal count of respondents for the given relative margin of error.
+}
+
+
+\examples{
+
+min_count(n = 15e3, pop = 2e6, RMoE = 0.1)
+
+\dontrun{
+
+min_count(n = c(10e3, 15e3, 20e3), pop = 2e6, 0.1)
+
+n <- seq(10e3, 30e3, length.out = 11)
+# n <- sort(c(n, 22691))
+n
+
+RMoE <- seq(.02, .2, length.out = 10)
+RMoE
+
+dt <- data.table(n = rep(n, each = length(RMoE)), RMoE = RMoE)
+dt[, Y := min_count(n = n, pop = 2.1e6, RMoE = RMoE, R = 1) / 1e3]
+dt
+}
+
+}
+
+\seealso{
+ \code{\link{expvar}}, \code{\link{optsize}}, \code{\link{MoE_P}}}
+
+\keyword{surveyplanning}

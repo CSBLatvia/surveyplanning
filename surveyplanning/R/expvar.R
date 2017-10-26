@@ -1,3 +1,4 @@
+
 expvarh <- function(s2h, nh, poph, Rh = 1, deffh = 1) {
                      nrh <- round(nh * Rh)
                      nrh <- ifelse(nrh < 1, 1, nrh)
@@ -120,6 +121,7 @@ expvar <- function(Yh, Zh=NULL, H, s2h, nh, poph,
   }
 
   variable <- nrh <- se <- cv <- estim <- NULL
+  variableY <- variableZ <- NULL
 
   domH <- H
   if (!is.null(Dom)) domH <- data.table(Dom, domH)
@@ -129,6 +131,7 @@ expvar <- function(Yh, Zh=NULL, H, s2h, nh, poph,
   setnames(s2h, names(s2h), names(Yh))
   s2h <- data.table(melt(data.table(domH, s2h), id = c(names(domH))))
   setnames(s2h, c("variable", "value"), c("variableY", "s2h"))
+  s2h[, variableY := as.character(variableY)]
   resulth <- merge(s2h, resulth, all = TRUE, by = c(names(domH)))
 
   if (!is.null(deffh)) {
@@ -141,11 +144,12 @@ expvar <- function(Yh, Zh=NULL, H, s2h, nh, poph,
   if (is.null(deffh)) resulth[, deffh := 1]
 
   if (!is.null(Zh)) {
-      parYZh <- data.table(variableY=names(Yh), variableZ=names(Zh))
+      parYZh <- data.table(variableY=names(Yh), variableZ = names(Zh))
       Zh <- data.table(melt(data.table(domH, Zh), id = c(names(domH))))
       setnames(Zh, c("variable", "value"), c("variableZ", "Zh"))
+      Zh[, variableZ := as.character(variableZ)]
       Zh <- merge(Zh, parYZh, all.x = TRUE, by = "variableZ")
-
+  
       resulth <- merge(Zh, resulth, all = TRUE, by = c(names(domH), "variableY"))
   }
 

@@ -1,0 +1,58 @@
+
+\name{MoE_P}
+
+\alias{MoE_P}
+
+\title{Margin of error for proportion}
+
+\description{
+The function computes margin of error for proportion. The calculation takes into proportion, expected response rate and design effect.
+}
+
+\usage{
+MoE_P(P = 0.5, n, pop, confidence = .95,
+      R = 1, deff_sam = 1, deff_est = 1)
+}
+
+\arguments{
+\item{P}{The expected proportion for variable of interest.}
+
+\item{n}{The expected sample size.}
+
+\item{pop}{Population size.}
+
+\item{confidence}{Optional positive value for confidence interval. This variable by default is 0.95.}
+
+\item{R}{The expected response rate (optional). If not defined, it is assumed to be 1 (full-response).}
+
+\item{deff_sam}{The expected design effect of sample design for the estimates (optional). If not defined, it is assumed to be 1.}
+
+\item{deff_est}{The estimated design effect of estimator for the estimates (optional). If not defined, it is assumed to be 1.}
+
+
+}
+
+\value{
+The estimate of margin of error for proportion.
+}
+
+
+\examples{
+
+n <- 100
+pop <- 1000
+
+MoE_P(P = 0.5, n = n, pop = pop)
+
+DT <- data.table(P = seq(0, 1, 0.01))
+DT[, Y := round(pop * P)]
+DT[, AMoE := MoE_P(P, n = 100, pop = 1000)]
+DT[Y > 0, RMoE := AMoE / Y]
+DT
+
+}
+
+\seealso{
+ \code{\link{expvar}}, \code{\link{optsize}}, \code{\link{MoE_Y}}}
+
+\keyword{surveyplanning}
