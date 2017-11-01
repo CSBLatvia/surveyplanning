@@ -8,6 +8,7 @@ export(min_count)
 export(min_prop)
 export(MoE_P)
 export(MoE_Y)
+export(round2)
 export(s2)
 
 import(data.table)

@@ -1,19 +1,27 @@
-Changes in vardpoor version 0.2.8
+Changes in vardpoor version 2.9
+  
+    + Add function min_count, min_size, MoE_Y, MoE_P
+
+Changes in vardpoor version 2.8
    
     + Corrected calculation in prop_dom_optimal_allocation
 
-Changes in vardpoor version 0.2.6
+Changes in vardpoor version 2.7
+   
+    + Corrected calculation in prop_dom_optimal_allocation
+
+Changes in vardpoor version 2.6
    
     + Update some descriptions
 
-Changes in vardpoor version 0.2.4
+Changes in vardpoor version 2.4
    
     + Bug correction in functiom dom_optimal_allocation.
 
-Changes in vardpoor version 0.2.2
+Changes in vardpoor version 2.2
    
     + Made faster functiom dom_optimal_allocation.
 
-Changes in vardpoor version 0.2.0
+Changes in vardpoor version 2.0
    
     + Corrected bug in function expvar.
