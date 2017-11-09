@@ -25,6 +25,8 @@ If \code{w} is not defined, the result is equal to the result of the function \c
 
 \value{
 Population variance \eqn{S^2} or the estimate of population variance \eqn{s^2}.
+
+Returns \code{NA} if \code{length(y) == 1L}.
 }
 
 \examples{
