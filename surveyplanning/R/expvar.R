@@ -1,9 +1,79 @@
-expvarh <- function(s2h, nh, poph, Rh = 1, deffh = 1) {
-  nrh <- round(nh * Rh)
-  nrh <- ifelse(nrh < 1, 1, nrh)
-  var <- poph ^ 2 * (1 - nrh / poph) / nrh * s2h * deffh
-  return(var)
-}
+#' Expected precision for the estimates of totals
+#'
+#' The function computes expected precision as variance, standard error, and coefficient of variation for the estimates.
+#'
+#' @param Yh The expected totals for variables of interest in each stratum. Object convertible to \code{data.table}, variable names as character vector, or column numbers.
+#' @param Zh Optional variables of denominator for the expected ratio estimation in each stratum. Object convertible to \code{data.table}, variable names as character vector, or column numbers.
+#' @param H The stratum variable. One dimensional object convertible to one-column \code{data.table}, variable name as character, or column number.
+#' @param s2h The expected population variance \eqn{S^2} for variables of interest in each stratum. Variables is defined the same arrangement as \code{Yh}. Object convertible to \code{data.table}, variable name as character vector, or column numbers.
+#' @param nh Sample size in each stratum. One dimensional object convertible to one-column \code{data.table}, variable name as character, or column number.
+#' @param poph Population size in each stratum. One dimensional object convertible to one-column \code{data.table}, variable name as character, or column number.
+#' @param Rh The expected response rate in each stratum (optional). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.
+#' @param deffh The expected design effect for the estimates of totals (optional). If not defined, it is assumed to be 1 for each variable in each stratum. If is defined, then variables is defined the same arrangement as \code{Yh}. Object convertible to \code{data.table}, variable name as character vector, or column numbers.
+#' @param Dom Optional variables used to define population domains. Only domains as unions of strata can be defined. If supplied, estimated precision is calculated for each domain. An object convertible to \code{data.table}, variable names as character vector, or column numbers.
+#' @param dataset Optional survey data object convertible to \code{data.table} with one row for each stratum.
+#'
+#'
+#' @return  A list with three data objects:
+#'   \item{resultH}{An object as \code{data.table}, with variables: \cr
+#'   \code{H} - stratum, \cr
+#'   \code{variableY} - the name of variable of interest, \cr
+#'   \code{variableZ} - the name of optional variable of denominator for the expected ratio estimation, \cr
+#'   \code{estim} - total value, \cr
+#'   \code{deffh} - the expected design effect, \cr
+#'   \code{s2h} - population variance \eqn{S^2}, \cr
+#'   \code{nh} - sample size, \cr
+#'   \code{Rh} - the expected response rate, \cr
+#'   \code{poph} - population size, \cr
+#'   \code{nrh} - expected number of respondents, \cr
+#'   \code{var} - expected variance, \cr
+#'   \code{se} - expected standard error, \cr
+#'   \code{cv} - expected coeficient of variance.}
+#'
+#'\item{resultDom}{An object as \code{data.table}, with variables: \cr
+#'   \code{Dom} - domain, \cr
+#'   \code{variableY} - the name of variable of interest, \cr
+#'   \code{variableZ} - the name of optional variable of denominator for the expected ratio estimation, \cr
+#'   \code{poph} - the population size, \cr
+#'   \code{nh} - sample size, \cr
+#'   \code{nrh} - expected number of respondents, \cr
+#'   \code{estim} - total value, \cr
+#'   \code{var} - the expected variance, \cr
+#'   \code{se} - the expected standart error, \cr
+#'   \code{cv} - the expected coeficient of variance.}
+#'
+#'\item{result}{An object as \code{data.table}, with variables: \cr
+#'   \code{variableY} - the name of variable of interest, \cr
+#'   \code{variableZ} - the name of optional variable of denominator for the expected ratio estimation, \cr
+#'   \code{poph} - the population size, \cr
+#'   \code{nh} - sample size, \cr
+#'   \code{nrh} - expected number of respondents, \cr
+#'   \code{estim} - total value, \cr
+#'   \code{var} - the expected variance, \cr
+#'   \code{se} - the expected standart error, \cr
+#'   \code{cv} - the expected coeficient of variance.}
+#'
+#' @seealso \code{\link{expvar}}, \code{\link{optsize}}
+#'
+#' @keywords surveysampling
+#'
+#' @examples
+#' library(data.table)
+#' data <- data.table(H = 1:3, Yh = 10 * 1:3,
+#'                    Yh1 = 10 * 4:6, s2h = 10 * runif(3),
+#'                    s2h2 = 10 * runif(3), nh = rep(4 * 1:3),
+#'                    poph = 8 * 1:3, Rh = rep(1, 3),
+#'                    deffh = rep(2, 3), deffh2 = rep(3, 3))
+#'
+#' vars <- expvar(Yh = c("Yh", "Yh1"), H = "H",
+#'                s2h = c("s2h", "s2h2"),
+#'                nh = "nh", poph = "poph",
+#'                Rh = "Rh", deffh = c("deffh", "deffh2"),
+#'                dataset = data)
+#' vars
+#'
+#' @import data.table stats
+#' @export expvar
 
 expvar <- function(Yh, Zh = NULL, H, s2h, nh, poph,
                    Rh = NULL, deffh = NULL, Dom = NULL,
@@ -11,50 +81,34 @@ expvar <- function(Yh, Zh = NULL, H, s2h, nh, poph,
 
   if (!is.null(dataset)) {
     dataset <- data.table(dataset)
-
     if (min(Yh %in% names(dataset)) != 1) stop("'Yh' does not exist in 'dataset'!")
-
-    if (min(Yh %in% names(dataset)) == 1) Yh <- dataset[, Yh, with = FALSE]
+    if (min(Yh %in% names(dataset)) == 1)  Yh <- dataset[, Yh, with = FALSE]
 
     if (!is.null(H)) {
       if (min(H %in% names(dataset)) != 1) stop("'H' does not exist in 'dataset'!")
-      if (min(H %in% names(dataset)) == 1) H <- dataset[, H, with = FALSE]
-    }
-
+      if (min(H %in% names(dataset)) == 1) H <- dataset[, H, with = FALSE] }
     if (!is.null(Zh)) {
       if (min(Zh %in% names(dataset)) != 1) stop("'Zh' does not exist in 'dataset'!")
-      if (min(Zh %in% names(dataset)) == 1) Zh <- dataset[, Zh, with = FALSE]
-    }
+      if (min(Zh %in% names(dataset)) == 1) Zh <- dataset[, Zh, with = FALSE] }
 
     if (!is.null(s2h)) {
       if (min(s2h %in% names(dataset)) != 1) stop("'s2h' does not exist in 'dataset'!")
-      if (min(s2h %in% names(dataset)) == 1) s2h <- dataset[, s2h, with = FALSE]
-    }
-
+      if (min(s2h %in% names(dataset)) == 1) s2h <- dataset[, s2h, with = FALSE]      }
     if (!is.null(nh)) {
       if (min(nh %in% names(dataset)) != 1) stop("'nh' does not exist in 'dataset'!")
-      if (min(nh %in% names(dataset)) == 1) nh <- dataset[, nh, with = FALSE]
-    }
-
+      if (min(nh %in% names(dataset)) == 1) nh <- dataset[, nh, with = FALSE] }
     if (!is.null(poph)) {
       if (min(poph %in% names(dataset)) != 1) stop("'poph' does not exist in 'dataset'!")
-      if (min(poph %in% names(dataset)) == 1) poph <- dataset[, poph, with = FALSE]
-    }
-
+      if (min(poph %in% names(dataset)) == 1) poph <- dataset[, poph, with = FALSE] }
     if (!is.null(Rh)) {
       if (min(Rh %in% names(dataset)) != 1) stop("'Rh' does not exist in 'dataset'!")
-      if (min(Rh %in% names(dataset)) == 1) Rh <- dataset[, Rh, with = FALSE]
-    }
-
+      if (min(Rh %in% names(dataset)) == 1) Rh <- dataset[, Rh, with = FALSE] }
     if (!is.null(deffh)) {
       if (min(deffh %in% names(dataset)) != 1) stop("'deffh' does not exist in 'dataset'!")
-      if (min(deffh %in% names(dataset)) == 1) deffh <- dataset[, deffh, with = FALSE]
-    }
-
+      if (min(deffh %in% names(dataset)) == 1) deffh <- dataset[, deffh, with = FALSE] }
     if (!is.null(Dom)) {
       if (min(Dom %in% names(dataset)) != 1) stop("'Dom' does not exist in 'data'!")
-      if (min(Dom %in% names(dataset)) == 1) Dom <- dataset[, Dom, with = FALSE]
-    }
+      if (min(Dom %in% names(dataset)) == 1) Dom <- dataset[, Dom, with = FALSE]  }
   }
 
   # Yh
@@ -64,6 +118,7 @@ expvar <- function(Yh, Zh = NULL, H, s2h, nh, poph,
   if (any(is.na(Yh))) stop("'Yh' has unknown values")
   if (!all(sapply(Yh, is.numeric))) stop("'Yh' must be all numeric values")
   if (is.null(names(Yh))) stop("'Yh' must be colnames")
+  Yh <- data.table(sapply(Yh, as.numeric))
 
   s2h <- data.table(s2h, check.names = TRUE)
   if (nrow(s2h) != n) stop("'s2h' length must be equal with 'Yh' row count")
@@ -150,7 +205,7 @@ expvar <- function(Yh, Zh = NULL, H, s2h, nh, poph,
 
   if (!is.null(deffh)) {
     setnames(deffh, names(deffh), names(Yh))
-    deffh <- data.table(melt(data.table(domH, deffh), id = c(names(domH))))
+    deffh <- data.table(melt(data.table(domH, deffh), id=c(names(domH))))
     setnames(deffh, c("variable", "value"), c("variableY", "deffh"))
     resulth <- merge(deffh, resulth, all = TRUE, by = c(names(domH), "variableY"))
   }
@@ -158,7 +213,7 @@ expvar <- function(Yh, Zh = NULL, H, s2h, nh, poph,
   if (is.null(deffh)) resulth[, deffh := 1]
 
   if (!is.null(Zh)) {
-    parYZh <- data.table(variableY = names(Yh), variableZ = names(Zh))
+    parYZh <- data.table(variableY=names(Yh), variableZ = names(Zh))
     Zh <- data.table(melt(data.table(domH, Zh), id = c(names(domH))))
     setnames(Zh, c("variable", "value"), c("variableZ", "Zh"))
     Zh[, variableZ := as.character(variableZ)]
@@ -169,13 +224,10 @@ expvar <- function(Yh, Zh = NULL, H, s2h, nh, poph,
 
   Yh <- data.table(melt(data.table(domH, Yh), id = c(names(domH))))
   setnames(Yh, c("variable", "value"), c("variableY", "Yh"))
-  resulth <- merge(Yh, resulth, all = TRUE, by = c(names(domH), "variableY"))
+  resulth <- merge(Yh, resulth, all=TRUE, by=c(names(domH), "variableY"))
 
-  if (!is.null(resulth$Zh)) {
-    resulth[, estim := Yh / Zh]
-  } else {
-    resulth[, estim := Yh]
-  }
+  if (!is.null(resulth$Zh)) { resulth[, estim := Yh / Zh]
+  } else resulth[, estim := Yh]
 
   resulth[, nrh := round(nh * Rh)]
   resulth[nrh < 1, nrh := 1]
@@ -193,28 +245,26 @@ expvar <- function(Yh, Zh = NULL, H, s2h, nh, poph,
                        keyby = c(names(Dom), vals),
                        .SDcols = c(vars, estim, "poph",
                                    "nh", "nrh",  "var")]
-  if (!is.null(resultDom$Zh)) {
-    resultDom[, estim := Yh / Zh]
-  } else {
-    resultDom[, estim := Yh]
-  }
-
+  if (!is.null(resultDom$Zh)) { resultDom[, estim := Yh / Zh]
+  } else resultDom[, estim := Yh]
   resultDom[, se := sqrt(var)]
   resultDom[, cv := ifelse(estim != 0, 100 * se / estim, NA)]
 
   result <-  resultDom[, lapply(.SD, sum, na.rm = TRUE), keyby = vals,
                        .SDcols = c(vars, "poph", "nh", "nrh", "var")]
-
-  if (!is.null(result$Zh)) {
-    result[, estim := Yh / Zh]
-  } else {
-    result[, estim := Yh]
-  }
-
+  if (!is.null(result$Zh)) { result[, estim := Yh/Zh]
+  } else result[, estim := Yh]
   result[, se := sqrt(var)]
   result[, cv := ifelse(estim != 0, 100 * se / estim, NA)]
 
-  (list(resultDomH = resulth[],
-        resultDom = resultDom[],
-        result = result[]))
+  list(resultDomH = resulth,
+       resultDom = resultDom,
+       result = result)
+}
+
+expvarh <- function(s2h, nh, poph, Rh = 1, deffh = 1) {
+  nrh <- round(nh * Rh)
+  nrh <- ifelse(nrh < 1, 1, nrh)
+  var <- poph ^ 2 * (1 - nrh / poph) / nrh * s2h * deffh
+  return(var)
 }

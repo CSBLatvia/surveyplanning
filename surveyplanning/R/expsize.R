@@ -1,3 +1,52 @@
+#' Sample size calculation
+#'
+#' The function computes minimum sample size for each stratum to achieve defined precision (CV) for the estimates of totals in each stratum. The calculation takes into account expected totals, population variance, expected response rate and design effect in each stratum.
+#'
+#' @param Yh The expected totals for variables of interest in each stratum. Object convertible to \code{data.table}, variable names as character vector, or column numbers.
+#' @param H The stratum variable. One dimensional object convertible to one-column \code{data.table}, variable name as character, or column number.
+#' @param s2h The expected population variance \eqn{S^2} for variables of interest in each stratum. Object convertible to \code{data.table}, variable name as character vector, or column numbers.
+#' @param poph Population size in each stratum. One dimensional object convertible to one-column \code{data.table}, variable name as character, or column number.
+#' @param Rh The expected response rate in each stratum (optional). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.
+#' @param deffh The expected design effect for the estimates of totals (optional). If not defined, it is assumed to be 1 for each variable in each stratum. Object convertible to \code{data.table}, variable name as character vector, or column numbers.
+#' @param CVh Coefficient of variation (in percentage) to be achieved for each stratum. One dimensional object convertible to one-column \code{data.table}, variable name as character, or column number.
+#' @param dataset Optional survey data object convertible to \code{data.table} with one row for each stratum.
+
+#' @return A \code{data.table} is returned by the function, with variables:\cr
+#'   \code{H} - stratum, \cr
+#'   \code{variable} - the name of variable of interest, \cr
+#'   \code{estim} - total value, \cr
+#'   \code{deffh} - the expected design effect, \cr
+#'   \code{s2h} - population variance \eqn{S^2}, \cr
+#'   \code{CVh} - the expected coefficient of variation, \cr
+#'   \code{Rh} - the expected response rate, \cr
+#'   \code{poph} - population size, \cr
+#'   \code{nh} - minimal sample size to achieve defined precision (CV).
+#'
+#' @seealso \code{\link{expvar}}, \code{\link{optsize}}, \code{\link{MoE_P}}
+#'
+#'
+#' @keywords surveysampling
+#' @examples
+#' library(data.table)
+#' data <- data.table(H = 1:3, Yh = 10 * 1:3,
+#'                    Yh1 = 10 * 4:6, s2h = 10 * runif(3),
+#'                    s2h2 = 10 * runif(3), CVh = rep(4.9,3),
+#'                    poph = 8 * 1:3, Rh = rep(1, 3),
+#'                    deffh = rep(2, 3), deffh2 = rep(3, 3))
+#'
+#' size <- expsize(Yh = c("Yh", "Yh1"), H = "H",
+#'                 s2h = c("s2h", "s2h2"), poph = "poph",
+#'                 Rh = "Rh", deffh = c("deffh", "deffh2"),
+#'                 CVh = "CVh", dataset = data)
+#'
+#' size
+#'
+#'
+#' @import data.table
+#' @export expsize
+#'
+
+
 expsize <- function(Yh, H, s2h, poph,
                     Rh = NULL,
                     deffh = NULL, CVh,
@@ -5,42 +54,42 @@ expsize <- function(Yh, H, s2h, poph,
 
   ### Checking
 
-  if(!is.null(dataset)) {
-      dataset <- data.table(dataset)
-      if (min(Yh %in% names(dataset)) != 1) stop("'Yh' does not exist in 'dataset'!")
-      if (min(Yh %in% names(dataset)) == 1) Yh <- dataset[, Yh, with = FALSE]
+  if (!is.null(dataset)) {
+    dataset <- data.table(dataset)
+    if (min(Yh %in% names(dataset)) != 1) stop("'Yh' does not exist in 'dataset'!")
+    if (min(Yh %in% names(dataset)) == 1) Yh <- dataset[, Yh, with = FALSE]
 
-      if(!is.null(H)) {
-          if (min(H %in% names(dataset)) != 1) stop("'H' does not exist in 'dataset'!")
-          if (min(H %in% names(dataset)) == 1) H <- dataset[, H, with = FALSE]}
-      if(!is.null(s2h)) {
-          if (min(s2h %in% names(dataset)) != 1) stop("'s2h' does not exist in 'dataset'!")
-          if (min(s2h %in% names(dataset)) == 1) s2h <- dataset[, s2h, with = FALSE] }
-      if(!is.null(CVh)) {
-          if (min(CVh %in% names(dataset)) != 1) stop("'CVh' does not exist in 'dataset'!")
-          if (min(CVh %in% names(dataset)) == 1) CVh <- dataset[, CVh, with = FALSE] }
-      if(!is.null(poph)) {
-          if (min(poph %in% names(dataset)) != 1) stop("'poph' does not exist in 'dataset'!")
-          if (min(poph %in% names(dataset)) == 1) poph <- dataset[, poph, with = FALSE] }
-      if(!is.null(Rh)) {
-          if (min(Rh %in% names(dataset)) != 1) stop("'Rh' does not exist in 'dataset'!")
-          if (min(Rh %in% names(dataset)) == 1) Rh <- dataset[, Rh, with = FALSE]}
-      if(!is.null(deffh)) {
-          if (min(deffh %in% names(dataset)) != 1) stop("'deffh' does not exist in 'dataset'!")
-          if (min(deffh %in% names(dataset)) == 1) deffh <- dataset[, deffh, with = FALSE] }
+    if (!is.null(H)) {
+      if (min(H %in% names(dataset)) != 1) stop("'H' does not exist in 'dataset'!")
+      if (min(H %in% names(dataset)) == 1) H <- dataset[, H, with = FALSE]}
+    if (!is.null(s2h)) {
+      if (min(s2h %in% names(dataset)) != 1) stop("'s2h' does not exist in 'dataset'!")
+      if (min(s2h %in% names(dataset)) == 1) s2h <- dataset[, s2h, with = FALSE] }
+    if (!is.null(CVh)) {
+      if (min(CVh %in% names(dataset)) != 1) stop("'CVh' does not exist in 'dataset'!")
+      if (min(CVh %in% names(dataset)) == 1) CVh <- dataset[, CVh, with = FALSE] }
+    if (!is.null(poph)) {
+      if (min(poph %in% names(dataset)) != 1) stop("'poph' does not exist in 'dataset'!")
+      if (min(poph %in% names(dataset)) == 1) poph <- dataset[, poph, with = FALSE] }
+    if (!is.null(Rh)) {
+      if (min(Rh %in% names(dataset)) != 1) stop("'Rh' does not exist in 'dataset'!")
+      if (min(Rh %in% names(dataset)) == 1) Rh <- dataset[, Rh, with = FALSE]}
+    if (!is.null(deffh)) {
+      if (min(deffh %in% names(dataset)) != 1) stop("'deffh' does not exist in 'dataset'!")
+      if (min(deffh %in% names(dataset)) == 1) deffh <- dataset[, deffh, with = FALSE] }
   }
 
   # Yh
-  Yh <- data.table(Yh, check.names=TRUE)
+  Yh <- data.table(Yh, check.names = TRUE)
   n <- nrow(Yh)
   m <- ncol(Yh)
   if (any(is.na(Yh))) stop("'Yh' has unknown values")
   if (!all(sapply(Yh, is.numeric))) stop("'Yh' must be all numeric values")
   if (is.null(names(Yh))) stop("'Yh' must be colnames")
-  Yh[, (names(Yh)):=lapply(.SD, as.numeric)]
+  Yh[, (names(Yh)) := lapply(.SD, as.numeric)]
 
 
-  s2h <- data.table(s2h, check.names=TRUE)
+  s2h <- data.table(s2h, check.names = TRUE)
   if (nrow(s2h) != n) stop("'s2h' length must be equal with 'Yh' row count")
   if (ncol(s2h) != m) stop("'s2h' and 'Yh' must be equal column count")
   if (any(is.na(s2h))) stop("'s2h' has unknown values")
@@ -80,13 +129,13 @@ expsize <- function(Yh, H, s2h, poph,
   if (any(is.na(Rh))) stop("'Rh' has unknown values")
 
   if (!is.null(deffh)) {
-    deffh <- data.table(deffh, check.names=TRUE)
+    deffh <- data.table(deffh, check.names = TRUE)
     if (nrow(deffh) != n) stop("'deffh' length must be equal with 'Yh' row count")
     if (ncol(deffh) != m) stop("'deffh' and 'Yh' must be equal column count")
     if (any(is.na(deffh))) stop("'deffh' has unknown values")
     if (!all(sapply(deffh, is.numeric))) stop("'deffh' must be numeric values")
     if (is.null(names(deffh))) stop("'deffh' must be colnames")
-   }
+  }
 
   variable <- nh <- estim <- NULL
 
@@ -107,7 +156,7 @@ expsize <- function(Yh, H, s2h, poph,
   Rh <- CVh <- poph <- NULL
 
   setnames(s2h, names(s2h), names(Yh))
-  s2h <- melt(data.table(H, s2h), id=c(names(H)))
+  s2h <- melt(data.table(H, s2h), id = c(names(H)))
   setnames(s2h, "value", "s2h")
   resulth <- merge(s2h, resulth, all = TRUE, by = c(names(H)))
 
@@ -126,6 +175,6 @@ expsize <- function(Yh, H, s2h, poph,
   Yh <- deffh <- s2h <- NULL
 
   resulth[, nh := poph ^ 2 * s2h * deffh /
-                    (Rh * ((estim * CVh / 100) ^ 2 + poph * s2h  * deffh))]
+            (Rh * ((estim * CVh / 100) ^ 2 + poph * s2h  * deffh))]
   return(resulth)
 }
