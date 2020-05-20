@@ -1,6 +1,6 @@
 #' Rounding numbers
 #'
-#' The function rounds the values in its first argument to the specified number of decimal places (default 0).
+#' @description The function rounds the values in its first argument to the specified number of decimal places (default 0).
 #'
 #' @param x a numeric vector.
 #' @param n integer indicating the number of decimal places.

@@ -1,6 +1,6 @@
 #' Expected precision for the estimates of totals
 #'
-#' The function computes expected precision as variance, standard error, and coefficient of variation for the estimates.
+#' @description The function computes expected precision as variance, standard error, and coefficient of variation for the estimates.
 #'
 #' @param Yh The expected totals for variables of interest in each stratum. Object convertible to \code{data.table}, variable names as character vector, or column numbers.
 #' @param Zh Optional variables of denominator for the expected ratio estimation in each stratum. Object convertible to \code{data.table}, variable names as character vector, or column numbers.
@@ -58,7 +58,7 @@
 #' @keywords surveysampling
 #'
 #' @examples
-#' library(data.table)
+#' library("data.table")
 #' data <- data.table(H = 1:3, Yh = 10 * 1:3,
 #'                    Yh1 = 10 * 4:6, s2h = 10 * runif(3),
 #'                    s2h2 = 10 * runif(3), nh = rep(4 * 1:3),

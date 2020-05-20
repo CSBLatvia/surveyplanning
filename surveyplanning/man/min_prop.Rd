@@ -4,8 +4,7 @@
 \alias{min_prop}
 \title{Minimal proportion for the given relative margin of error}
 \usage{
-min_prop(n, pop, RMoE, confidence = 0.95, R = 1, deff_sam = 1,
-  deff_est = 1)
+min_prop(n, pop, RMoE, confidence = 0.95, R = 1, deff_sam = 1, deff_est = 1)
 }
 \arguments{
 \item{n}{The expected sample size.}
@@ -26,8 +25,7 @@ min_prop(n, pop, RMoE, confidence = 0.95, R = 1, deff_sam = 1,
 The estimate of minimal proportion for the given relative margin of error.
 }
 \description{
-The function computes minimal proportion for the given relative margin of error. The calculation takes into sample size, population size,
-margin of error, expected response rate and design effect.
+The function computes minimal proportion for the given relative margin of error. The calculation takes into sample size, population size, margin of error, expected response rate and design effect.
 }
 \examples{
 min_prop(n = 100, pop = 1000, RMoE = 0.1)

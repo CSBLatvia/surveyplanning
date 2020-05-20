@@ -1,6 +1,6 @@
 #' Sample size calculation
 #'
-#' The function computes minimum sample size for each stratum to achieve defined precision (CV) for the estimates of totals in each stratum. The calculation takes into account expected totals, population variance, expected response rate and design effect in each stratum.
+#' @description The function computes minimum sample size for each stratum to achieve defined precision (CV) for the estimates of totals in each stratum. The calculation takes into account expected totals, population variance, expected response rate and design effect in each stratum.
 #'
 #' @param Yh The expected totals for variables of interest in each stratum. Object convertible to \code{data.table}, variable names as character vector, or column numbers.
 #' @param H The stratum variable. One dimensional object convertible to one-column \code{data.table}, variable name as character, or column number.
@@ -27,7 +27,7 @@
 #'
 #' @keywords surveysampling
 #' @examples
-#' library(data.table)
+#' library("data.table")
 #' data <- data.table(H = 1:3, Yh = 10 * 1:3,
 #'                    Yh1 = 10 * 4:6, s2h = 10 * runif(3),
 #'                    s2h2 = 10 * runif(3), CVh = rep(4.9,3),

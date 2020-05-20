@@ -1,6 +1,6 @@
 #' Optimal sample size allocation
 #'
-#' The function computes optimal sample size allocation over strata.
+#' @description The function computes optimal sample size allocation over strata.
 #'
 #' @section Details:
 #' If \code{s2h} and \code{Rh} is not defined, the sample allocation will be calculated as proportional allocation (proportional to the population size).
@@ -32,7 +32,7 @@
 #' @keywords surveysampling
 #'
 #' @examples
-#' library(data.table)
+#' library("data.table")
 #' data <- data.table(H = 1 : 3,
 #'                    s2h=10 * runif(3),
 #'                    s2h2 = 10 * runif(3),

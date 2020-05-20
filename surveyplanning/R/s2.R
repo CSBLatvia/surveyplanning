@@ -1,6 +1,6 @@
 #' Population variance
 #'
-#' The function to estimate population variance \eqn{S^2}.
+#' @description The function to estimate population variance \eqn{S^2}.
 #'
 #' @section Details:
 #' If \code{w} is not defined, the result is equal to the result of the function \code{var}.
@@ -16,7 +16,7 @@
 #' all.equal(s2(1:10), var(1:10))
 #'
 #' @export s2
-#'
+
 
 # S^2 estimation
 s2 <- function(y, w = NULL) {

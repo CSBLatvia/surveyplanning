@@ -1,6 +1,6 @@
 #' Margin of error for proportion
 #'
-#' The function computes margin of error for proportion. The calculation takes into proportion, expected response rate and design effect.
+#' @description The function computes margin of error for proportion. The calculation takes into proportion, expected response rate and design effect.
 #'
 #' @param P The expected proportion for variable of interest.
 #' @param n The expected sample size.
@@ -17,7 +17,7 @@
 #' @keywords surveysampling
 #'
 #' @examples
-#' library(data.table)
+#' library("data.table")
 #' n <- 100
 #' pop <- 1000
 #'

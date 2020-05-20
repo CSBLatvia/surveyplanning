@@ -1,8 +1,8 @@
 Package: surveyplanning
 Type: Package
 Title: Survey Planning Tools
-Version: 3.0
-Date: 2019-03-25
+Version: 4.0
+Date: 2020-05-20
 Depends: R (>= 3.0.0)
 Imports: data.table (>= 1.11.4), laeken, stats
 Authors@R: c(person("Juris", "Breidaks", email = "rcsb@csb.gov.lv",  role = c("aut", "cre")), person("Martins", "Liberts", role = "aut"), person("Janis", "Jukams", role = "aut"))
@@ -15,5 +15,4 @@ URL: https://csblatvia.github.io/surveyplanning/
 BugReports: https://github.com/CSBLatvia/surveyplanning/issues/
 NeedsCompilation: yes
 LazyData: true
-RoxygenNote: 6.1.1
-
+RoxygenNote: 7.1.0

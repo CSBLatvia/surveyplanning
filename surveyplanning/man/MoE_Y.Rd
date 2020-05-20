@@ -4,8 +4,7 @@
 \alias{MoE_Y}
 \title{Margin of error for count}
 \usage{
-MoE_Y(P = 0.5, n, pop, confidence = 0.95, R = 1, deff_sam = 1,
-  deff_est = 1)
+MoE_Y(P = 0.5, n, pop, confidence = 0.95, R = 1, deff_sam = 1, deff_est = 1)
 }
 \arguments{
 \item{P}{The expected proportion for variable of interest.}
@@ -29,7 +28,7 @@ The estimate of margin of error for count.
 The function computes margin of error for count. The calculation takes into proportion, expected response rate and design effect.
 }
 \examples{
-library(data.table)
+library("data.table")
 n <- 100
 pop <- 1000
 

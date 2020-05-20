@@ -45,7 +45,5 @@ install.packages(paste0(package_name, "_", ver, ".zip"), repos = NULL)
 install.packages(paste0(package_name, "_", ver, ".tar.gz"), repos = NULL)
 
 
-
 require(surveyplanning)
-export.genkopa("2018C4")
 

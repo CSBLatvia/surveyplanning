@@ -1,6 +1,6 @@
 #' Optimal sample size allocation
 #'
-#' The function computes optimal sample size allocation over strata and domain for population.
+#' @description The function computes optimal sample size allocation over strata and domain for population.
 #'
 #' @param id Variable for unit ID codes. One dimensional object convertible to one-column \code{data.table} or variable name as character, column number.
 #' @param Dom Optional variables used to define population domains. If supplied, values are calculated for each domain. An object convertible to \code{data.table} or variable names as character vector, column numbers.
@@ -95,9 +95,9 @@
 #' @keywords surveysampling
 #'
 #' @examples
-#' library(laeken)
-#' library(data.table)
-#' data(ses)
+#' library("laeken")
+#' library("data.table")
+#' data("ses")
 #' data <- data.table(ses)
 #' data[, H := paste(location, NACE1, size, sep = "_")]
 #' data[, id := .I]

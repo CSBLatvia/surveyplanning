@@ -4,9 +4,19 @@
 \alias{prop_dom_optimal_allocation}
 \title{Optimal sample size allocation for proportion}
 \usage{
-prop_dom_optimal_allocation(H, Dom, pop = NULL, R = NULL,
-  deff = NULL, se_max = 0.5, prop = 0.5, min_size = 3, step = 1,
-  unit_level = TRUE, dataset = NULL)
+prop_dom_optimal_allocation(
+  H,
+  Dom,
+  pop = NULL,
+  R = NULL,
+  deff = NULL,
+  se_max = 0.5,
+  prop = 0.5,
+  min_size = 3,
+  step = 1,
+  unit_level = TRUE,
+  dataset = NULL
+)
 }
 \arguments{
 \item{H}{The stratum variable. One dimensional object convertible to one-column \code{data.table} or variable name as character, column number.}
@@ -54,9 +64,9 @@ A list with two data objects:
 The function computes optimal sample size allocation over strata and domain for proportion.
 }
 \examples{
-library(data.table)
-library(laeken)
-data(eusilc)
+library("data.table")
+library("laeken")
+data("eusilc")
 eusilc <- data.table(eusilc)
 dataset <- eusilc[, .(poph = sum(db090)), by = c("db040")]
 dataset[, dom := "1"]

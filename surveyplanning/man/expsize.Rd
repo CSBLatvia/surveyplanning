@@ -4,8 +4,7 @@
 \alias{expsize}
 \title{Sample size calculation}
 \usage{
-expsize(Yh, H, s2h, poph, Rh = NULL, deffh = NULL, CVh,
-  dataset = NULL)
+expsize(Yh, H, s2h, poph, Rh = NULL, deffh = NULL, CVh, dataset = NULL)
 }
 \arguments{
 \item{Yh}{The expected totals for variables of interest in each stratum. Object convertible to \code{data.table}, variable names as character vector, or column numbers.}
@@ -40,7 +39,7 @@ A \code{data.table} is returned by the function, with variables:\cr
 The function computes minimum sample size for each stratum to achieve defined precision (CV) for the estimates of totals in each stratum. The calculation takes into account expected totals, population variance, expected response rate and design effect in each stratum.
 }
 \examples{
-library(data.table)
+library("data.table")
 data <- data.table(H = 1:3, Yh = 10 * 1:3,
                    Yh1 = 10 * 4:6, s2h = 10 * runif(3),
                    s2h2 = 10 * runif(3), CVh = rep(4.9,3),

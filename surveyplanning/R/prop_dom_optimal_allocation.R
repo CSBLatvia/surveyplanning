@@ -1,6 +1,6 @@
 #' Optimal sample size allocation for proportion
 #'
-#' The function computes optimal sample size allocation over strata and domain for proportion.
+#' @description The function computes optimal sample size allocation over strata and domain for proportion.
 #'
 #' @param H The stratum variable. One dimensional object convertible to one-column \code{data.table} or variable name as character, column number.
 #' @param Dom}{Variables used to define population domains. An object convertible to \code{data.table} or variable names as character vector, column numbers.
@@ -39,9 +39,9 @@
 #' @keywords surveysampling
 
 #' @examples
-#' library(data.table)
-#' library(laeken)
-#' data(eusilc)
+#' library("data.table")
+#' library("laeken")
+#' data("eusilc")
 #' eusilc <- data.table(eusilc)
 #' dataset <- eusilc[, .(poph = sum(db090)), by = c("db040")]
 #' dataset[, dom := "1"]

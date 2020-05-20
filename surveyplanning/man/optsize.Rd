@@ -4,8 +4,16 @@
 \alias{optsize}
 \title{Optimal sample size allocation}
 \usage{
-optsize(H, n, poph, s2h = NULL, Rh = NULL, deffh = NULL,
-  fullsampleh = NULL, dataset = NULL)
+optsize(
+  H,
+  n,
+  poph,
+  s2h = NULL,
+  Rh = NULL,
+  deffh = NULL,
+  fullsampleh = NULL,
+  dataset = NULL
+)
 }
 \arguments{
 \item{H}{The stratum variable. One dimensional object convertible to one-column \code{data.table}, variable name as character, or column number.}
@@ -46,7 +54,7 @@ If \code{Rh} is not defined, the sample allocation will be calculated as Neyman 
 }
 
 \examples{
-library(data.table)
+library("data.table")
 data <- data.table(H = 1 : 3,
                    s2h=10 * runif(3),
                    s2h2 = 10 * runif(3),

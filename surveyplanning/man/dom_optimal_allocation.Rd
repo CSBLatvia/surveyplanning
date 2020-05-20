@@ -4,9 +4,20 @@
 \alias{dom_optimal_allocation}
 \title{Optimal sample size allocation}
 \usage{
-dom_optimal_allocation(id, Dom, H, Y, Rh = NULL, deffh = NULL,
-  indicator, sup_w, sup_cv, min_size = 3, correction_before = FALSE,
-  dataset = NULL)
+dom_optimal_allocation(
+  id,
+  Dom,
+  H,
+  Y,
+  Rh = NULL,
+  deffh = NULL,
+  indicator,
+  sup_w,
+  sup_cv,
+  min_size = 3,
+  correction_before = FALSE,
+  dataset = NULL
+)
 }
 \arguments{
 \item{id}{Variable for unit ID codes. One dimensional object convertible to one-column \code{data.table} or variable name as character, column number.}
@@ -114,9 +125,9 @@ A list with eights data objects:\cr
 The function computes optimal sample size allocation over strata and domain for population.
 }
 \examples{
-library(laeken)
-library(data.table)
-data(ses)
+library("laeken")
+library("data.table")
+data("ses")
 data <- data.table(ses)
 data[, H := paste(location, NACE1, size, sep = "_")]
 data[, id := .I]

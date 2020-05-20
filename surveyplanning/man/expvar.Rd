@@ -4,8 +4,18 @@
 \alias{expvar}
 \title{Expected precision for the estimates of totals}
 \usage{
-expvar(Yh, Zh = NULL, H, s2h, nh, poph, Rh = NULL, deffh = NULL,
-  Dom = NULL, dataset = NULL)
+expvar(
+  Yh,
+  Zh = NULL,
+  H,
+  s2h,
+  nh,
+  poph,
+  Rh = NULL,
+  deffh = NULL,
+  Dom = NULL,
+  dataset = NULL
+)
 }
 \arguments{
 \item{Yh}{The expected totals for variables of interest in each stratum. Object convertible to \code{data.table}, variable names as character vector, or column numbers.}
@@ -72,7 +82,7 @@ A list with three data objects:
 The function computes expected precision as variance, standard error, and coefficient of variation for the estimates.
 }
 \examples{
-library(data.table)
+library("data.table")
 data <- data.table(H = 1:3, Yh = 10 * 1:3,
                    Yh1 = 10 * 4:6, s2h = 10 * runif(3),
                    s2h2 = 10 * runif(3), nh = rep(4 * 1:3),

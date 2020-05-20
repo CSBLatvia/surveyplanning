@@ -1,7 +1,6 @@
 #' Minimal proportion for the given relative margin of error
 #'
-#' The function computes minimal proportion for the given relative margin of error. The calculation takes into sample size, population size,
-#' margin of error, expected response rate and design effect.
+#' @description The function computes minimal proportion for the given relative margin of error. The calculation takes into sample size, population size, margin of error, expected response rate and design effect.
 #'
 #' @param n The expected sample size.
 #' @param pop Population size.

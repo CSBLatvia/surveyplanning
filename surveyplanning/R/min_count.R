@@ -1,7 +1,6 @@
 #' Minimal count of respondents for the given relative margin of error
 #'
-#' The function computes minimal proportion for the given relative margin of error. The calculation takes into sample size, population size,
-#' margin of error, expected response rate and design effect.
+#' @description The function computes minimal proportion for the given relative margin of error. The calculation takes into sample size, population size, margin of error, expected response rate and design effect.
 #'
 #' @param n The expected sample size.
 #' @param pop Population size.
@@ -21,7 +20,7 @@
 #' min_count(n = 15e3, pop = 2e6, RMoE = 0.1)
 #'
 #' \dontrun{
-#' library(data.table)
+#' library("data.table")
 #' min_count(n = c(10e3, 15e3, 20e3), pop = 2e6, 0.1)
 #'
 #' n <- seq(10e3, 30e3, length.out = 11)
