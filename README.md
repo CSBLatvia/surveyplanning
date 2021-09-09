@@ -3,6 +3,7 @@
 [![CRAN version](http://www.r-pkg.org/badges/version/surveyplanning "CRAN version")](https://cran.r-project.org/package=surveyplanning)
 [![CRAN last release](http://www.r-pkg.org/badges/last-release/surveyplanning "CRAN last release")](https://cran.r-project.org/package=surveyplanning)
 [![CRAN last release](http://www.r-pkg.org/badges/ago/surveyplanning "CRAN last release")](https://cran.r-project.org/package=surveyplanning)
+[![Build Status](https://app.travis-ci.com/CSBLatvia/surveyplanning.svg?branch=master)](https://app.travis-ci.com/CSBLatvia/surveyplanning)
 
 [![CRAN total downloads](http://cranlogs.r-pkg.org/badges/grand-total/surveyplanning "CRAN total downloads")](https://cran.r-project.org/package=surveyplanning)
 [![CRAN monthly downloads](http://cranlogs.r-pkg.org/badges/surveyplanning "CRAN monthly downloads")](https://cran.r-project.org/package=surveyplanning)
@@ -24,5 +25,4 @@ Stable version from [CRAN](https://cran.r-project.org/package=surveyplanning)
 
 Development version from [github](https://github.com/CSBLatvia/surveyplanning)
 
-    library(devtools)
-    install_github("CSBLatvia/surveyplanning/surveyplanning")
+    remotes::install_github("CSBLatvia/surveyplanning/surveyplanning")
