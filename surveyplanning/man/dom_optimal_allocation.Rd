@@ -36,7 +36,7 @@ dom_optimal_allocation(
 
 \item{sup_w}{Variable for weight limit in domain of stratum. Object convertible to \code{data.table} or variable names as character, column numbers.}
 
-\item{sup_cv}{Variable for maximum coeficient of variation (CV) in percentage for domain. Object convertible to \code{data.table} or variable names as character, column numbers.}
+\item{sup_cv}{Variable for maximum coefficient of variation (CV) in percentage for domain. Object convertible to \code{data.table} or variable names as character, column numbers.}
 
 \item{min_size}{A numeric value for sample size.}
 
@@ -55,7 +55,7 @@ A list with eights data objects:\cr
   \code{deffh} - the expected design effect, \cr
   \code{indicator} - variable for full surveys, \cr
   \code{sup_w} - variable for weight limit in domain of stratum, \cr
-  \code{sup_cv} - Variable for maximum coeficient of variation, \cr
+  \code{sup_cv} - Variable for maximum coefficient of variation, \cr
   \code{poph} - population size, \cr
   \code{nh} - sample size . }
 
@@ -71,14 +71,14 @@ A list with eights data objects:\cr
   \code{poph} - population size, \cr
   \code{nh} - sample size, \cr
   \code{sample100} - sample size for fully surveyed units, \cr
-  \code{design_weights} - design weigts. }
+  \code{design_weights} - design weights. }
 
 \item{dom_size}{An object as \code{data.table}, with variables: \cr
   \code{Dom} - optional variables used to define population domains, \cr
   \code{poph} - population size, \cr
   \code{nh} - sample size, \cr
   \code{sample100} - sample size for fully surveyed units, \cr
-  \code{design_weights} - design weigts. }
+  \code{design_weights} - design weights. }
 
 \item{size}{An object as \code{data.table}, with variables: \cr
   \code{poph} - population size, \cr
@@ -98,7 +98,7 @@ A list with eights data objects:\cr
   \code{nrh} - expected number of respondents, \cr
   \code{var} - expected variance, \cr
   \code{se} - expected standard error, \cr
-  \code{cv} - expected coeficient of variance.}
+  \code{cv} - expected coefficient of variance.}
 
 \item{dom_expected_precision}{An object as \code{data.table}, with variables: \cr
   \code{Dom} - domain, \cr
@@ -108,8 +108,8 @@ A list with eights data objects:\cr
   \code{nrh} - expected number of respondents, \cr
   \code{estim} - total value, \cr
   \code{var} - the expected variance, \cr
-  \code{se} - the expected standart error, \cr
-  \code{cv} - the expected coeficient of variance.}
+  \code{se} - the expected standard error, \cr
+  \code{cv} - the expected coefficient of variance.}
 
 \item{ total_expected_precision}{An object as \code{data.table}, with variables: \cr
   \code{variable} - the name of variable of interest, \cr
@@ -118,8 +118,8 @@ A list with eights data objects:\cr
   \code{nrh} - expected number of respondents, \cr
   \code{estim} - total value, \cr
   \code{var} - the expected variance, \cr
-  \code{se} - the expected standart error, \cr
-  \code{cv} - the expected coeficient of variance.}
+  \code{se} - the expected standard error, \cr
+  \code{cv} - the expected coefficient of variance.}
 }
 \description{
 The function computes optimal sample size allocation over strata and domain for population.
