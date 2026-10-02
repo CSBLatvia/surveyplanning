@@ -5,7 +5,7 @@
 #' @param P The expected proportion for variable of interest.
 #' @param n The expected sample size.
 #' @param pop Population size.
-#' @param confidence}{Optional positive value for confidence interval. This variable by default is 0.95.
+#' @param confidence Optional positive value for confidence interval. This variable by default is 0.95.
 #' @param R The expected response rate (optional). If not defined, it is assumed to be 1 (full-response).
 #' @param deff_sam The expected design effect of sample design for the estimates (optional). If not defined, it is assumed to be 1.
 #' @param deff_est The estimated design effect of estimator for the estimates (optional). If not defined, it is assumed to be 1.

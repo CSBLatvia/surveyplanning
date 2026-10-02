@@ -11,15 +11,6 @@ estimation of expected precision for the estimates of totals, and
 calculation of optimal sample size allocation.
 }
 \details{
-\tabular{ll}{
-Package: \tab surveyplanning\cr
-Version: \tab 2.9\cr
-Date: \tab 2017-10-26\cr
-Depends: \tab R (>= 3.0.0), data.table (>= 1.10.4), stats, laeken \cr
-License: \tab GPL (>= 2)\cr
-URL: \tab https://github.com/CSBLatvia/surveyplanning/ \cr
-BugReports: \tab https://github.com/CSBLatvia/surveyplanning/issues/ \cr
-}
 
 Index:
 \preformatted{
@@ -37,10 +28,10 @@ surveyplanning-package  Survey Planning Tools
 }
 }
 \author{
-Juris Breidaks [aut, cre],
+Juris Breidaks [aut],
 Martins Liberts [aut],
 Janis Jukams [aut]
 
-Maintainer: Juris Breidaks <rcsb@csb.gov.lv>
+Maintainer: Central Statistical Bureau of Latvia <rcsb@csp.gov.lv>
 }
 \keyword{ package }
