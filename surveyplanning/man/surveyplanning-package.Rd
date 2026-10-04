@@ -31,7 +31,5 @@ surveyplanning-package  Survey Planning Tools
 Juris Breidaks [aut],
 Martins Liberts [aut],
 Janis Jukams [aut]
-
-Maintainer: Central Statistical Bureau of Latvia <rcsb@csp.gov.lv>
 }
 \keyword{ package }
