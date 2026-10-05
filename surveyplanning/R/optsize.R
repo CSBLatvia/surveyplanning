@@ -12,7 +12,7 @@
 #' @param s2h The expected population variance \eqn{S^2} for variables of interest in each stratum (optional). If not defined, it is assumed to be 1 in each stratum. Object convertible to \code{data.table}, variable name as character vector, or column numbers.
 #' @param Rh The expected response rate in each stratum (optional). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.
 #' @param deffh The expected design effect for the estimate of variable (optional). If not defined, it is assumed to be 1 for each variable in each stratum. If is defined, then variables is defined the same arrangement as \code{Yh}. Object convertible to \code{data.table}, variable name as character vector, or column numbers.
-#' @param fullsampleh Variable for detection fully surveyed stratum (optinal). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.
+#' @param fullsampleh Variable for detection fully surveyed stratum (optional). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.
 #' @param dataset Optional survey data object convertible to \code{data.table} with one row for each stratum.
 #'
 
@@ -20,7 +20,7 @@
 #'   \code{H} - stratum, \cr
 #'   \code{variable} - the name of variable for population variance \eqn{S^2}, \cr
 #'   \code{s2h} - population variance \eqn{S^2}, \cr
-#'   \code{Rh} - the expectedresponse rate, \cr
+#'   \code{Rh} - the expected response rate, \cr
 #'   \code{deffh} - the expected design effect, \cr
 #'   \code{poph} - population size, \cr
 #'   \code{deffh} - design effect, \cr

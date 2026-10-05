@@ -21,25 +21,25 @@ prop_dom_optimal_allocation(
 \arguments{
 \item{H}{The stratum variable. One dimensional object convertible to one-column \code{data.table} or variable name as character, column number.}
 
-\item{Dom}{Variables}{used to define population domains. An object convertible to \code{data.table} or variable names as character vector, column numbers.}
+\item{Dom}{Variables used to define population domains. An object convertible to \code{data.table} or variable names as character vector, column numbers.}
 
-\item{pop}{The}{population size in each stratum.}
+\item{pop}{The population size in each stratum.}
 
-\item{R}{The}{expected response rate in each stratum (optional). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.}
+\item{R}{The expected response rate in each stratum (optional). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.}
 
-\item{deff}{The}{expected design effect for the estimate of variable (optional). If not defined, it is assumed to be 1 for each variable in each stratum. If is defined, then variables is defined the same arrangement as \code{Yh}. Object convertible to \code{data.table}, variable name as character vector, or column numbers.}
+\item{deff}{The expected design effect for the estimate of variable (optional). If not defined, it is assumed to be 1 for each variable in each stratum. If is defined, then variables is defined the same arrangement as \code{Yh}. Object convertible to \code{data.table}, variable name as character vector, or column numbers.}
 
-\item{se_max}{Variable}{for maximum standarterror (se) in domain.}
+\item{se_max}{Variable for maximum standard error (se) in domain.}
 
-\item{prop}{The}{excepted ratio proportion.}
+\item{prop}{The excepted ratio proportion.}
 
-\item{min_size}{A}{numeric value for minimal sample size.}
+\item{min_size}{A numeric value for minimal sample size.}
 
-\item{step}{A}{value for pace.}
+\item{step}{A value for pace.}
 
-\item{unit_level}{A}{logical value, if dataset is prepared for unit level then value TRUE, othercase FALSE.}
+\item{unit_level}{A logical value, if dataset is prepared for unit level then value TRUE, other case FALSE.}
 
-\item{dataset}{Optional}{agrregated survey data object convertible to \code{data.table} with one row for each stratum.}
+\item{dataset}{Optional aggregated survey data object convertible to \code{data.table} with one row for each stratum.}
 }
 \value{
 A list with two data objects:
@@ -50,7 +50,7 @@ A list with two data objects:
   \code{Rh} - the expected response rate in each stratum, \cr
   \code{deffh} - the expected design effect, \cr
   \code{s2h} - variance in domain of stratum, \cr
-  \code{sup_cv} - Variable for maximum coeficient of variation, \cr
+  \code{sup_cv} - Variable for maximum coefficient of variation, \cr
   \code{poph} - population size, \cr
   \code{nh} - sample size .}
 \item{aggr_Dom}{An object as \code{data.table}, with variables: \cr
