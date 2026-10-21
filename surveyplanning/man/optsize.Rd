@@ -28,7 +28,7 @@ optsize(
 
 \item{deffh}{The expected design effect for the estimate of variable (optional). If not defined, it is assumed to be 1 for each variable in each stratum. If is defined, then variables is defined the same arrangement as \code{Yh}. Object convertible to \code{data.table}, variable name as character vector, or column numbers.}
 
-\item{fullsampleh}{Variable for detection fully surveyed stratum (optinal). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.}
+\item{fullsampleh}{Variable for detection fully surveyed stratum (optional). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.}
 
 \item{dataset}{Optional survey data object convertible to \code{data.table} with one row for each stratum.}
 }
@@ -37,7 +37,7 @@ An object as \code{data.table}, with variables:\cr
   \code{H} - stratum, \cr
   \code{variable} - the name of variable for population variance \eqn{S^2}, \cr
   \code{s2h} - population variance \eqn{S^2}, \cr
-  \code{Rh} - the expectedresponse rate, \cr
+  \code{Rh} - the expected response rate, \cr
   \code{deffh} - the expected design effect, \cr
   \code{poph} - population size, \cr
   \code{deffh} - design effect, \cr

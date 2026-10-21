@@ -13,13 +13,13 @@ MoE_P(P = 0.5, n, pop, confidence = 0.95, R = 1, deff_sam = 1, deff_est = 1)
 
 \item{pop}{Population size.}
 
+\item{confidence}{Optional positive value for confidence interval. This variable by default is 0.95.}
+
 \item{R}{The expected response rate (optional). If not defined, it is assumed to be 1 (full-response).}
 
 \item{deff_sam}{The expected design effect of sample design for the estimates (optional). If not defined, it is assumed to be 1.}
 
 \item{deff_est}{The estimated design effect of estimator for the estimates (optional). If not defined, it is assumed to be 1.}
-
-\item{confidence}{Optional}{positive value for confidence interval. This variable by default is 0.95.}
 }
 \value{
 The estimate of margin of error for proportion.

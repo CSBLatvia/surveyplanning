@@ -28,7 +28,7 @@
 #'   \code{nrh} - expected number of respondents, \cr
 #'   \code{var} - expected variance, \cr
 #'   \code{se} - expected standard error, \cr
-#'   \code{cv} - expected coeficient of variance.}
+#'   \code{cv} - expected coefficient of variance.}
 #'
 #'\item{resultDom}{An object as \code{data.table}, with variables: \cr
 #'   \code{Dom} - domain, \cr
@@ -39,8 +39,8 @@
 #'   \code{nrh} - expected number of respondents, \cr
 #'   \code{estim} - total value, \cr
 #'   \code{var} - the expected variance, \cr
-#'   \code{se} - the expected standart error, \cr
-#'   \code{cv} - the expected coeficient of variance.}
+#'   \code{se} - the expected standard error, \cr
+#'   \code{cv} - the expected coefficient of variance.}
 #'
 #'\item{result}{An object as \code{data.table}, with variables: \cr
 #'   \code{variableY} - the name of variable of interest, \cr
@@ -50,8 +50,8 @@
 #'   \code{nrh} - expected number of respondents, \cr
 #'   \code{estim} - total value, \cr
 #'   \code{var} - the expected variance, \cr
-#'   \code{se} - the expected standart error, \cr
-#'   \code{cv} - the expected coeficient of variance.}
+#'   \code{se} - the expected standard error, \cr
+#'   \code{cv} - the expected coefficient of variance.}
 #'
 #' @seealso \code{\link{expvar}}, \code{\link{optsize}}
 #'

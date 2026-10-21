@@ -3,16 +3,16 @@
 #' @description The function computes optimal sample size allocation over strata and domain for proportion.
 #'
 #' @param H The stratum variable. One dimensional object convertible to one-column \code{data.table} or variable name as character, column number.
-#' @param Dom}{Variables used to define population domains. An object convertible to \code{data.table} or variable names as character vector, column numbers.
-#' @param pop}{The population size in each stratum.
-#' @param R}{The expected response rate in each stratum (optional). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.
-#' @param deff}{The expected design effect for the estimate of variable (optional). If not defined, it is assumed to be 1 for each variable in each stratum. If is defined, then variables is defined the same arrangement as \code{Yh}. Object convertible to \code{data.table}, variable name as character vector, or column numbers.
-#' @param se_max}{Variable for maximum standarterror (se) in domain.
-#' @param prop}{The excepted ratio proportion.
-#' @param min_size}{A numeric value for minimal sample size.
-#' @param step}{A value for pace.
-#' @param unit_level}{A logical value, if dataset is prepared for unit level then value TRUE, othercase FALSE.
-#' @param dataset}{Optional agrregated survey data object convertible to \code{data.table} with one row for each stratum.
+#' @param Dom Variables used to define population domains. An object convertible to \code{data.table} or variable names as character vector, column numbers.
+#' @param pop The population size in each stratum.
+#' @param R The expected response rate in each stratum (optional). If not defined, it is assumed to be 1 in each stratum (full-response). Object convertible to one-column \code{data.table}, variable name as character, or column number.
+#' @param deff The expected design effect for the estimate of variable (optional). If not defined, it is assumed to be 1 for each variable in each stratum. If is defined, then variables is defined the same arrangement as \code{Yh}. Object convertible to \code{data.table}, variable name as character vector, or column numbers.
+#' @param se_max Variable for maximum standard error (se) in domain.
+#' @param prop The excepted ratio proportion.
+#' @param min_size A numeric value for minimal sample size.
+#' @param step A value for pace.
+#' @param unit_level A logical value, if dataset is prepared for unit level then value TRUE, other case FALSE.
+#' @param dataset Optional aggregated survey data object convertible to \code{data.table} with one row for each stratum.
 #'
 #' @return  A list with two data objects:
 #' \item{datah}{An object as \code{data.table}, with variables: \cr
@@ -22,7 +22,7 @@
 #'   \code{Rh} - the expected response rate in each stratum, \cr
 #'   \code{deffh} - the expected design effect, \cr
 #'   \code{s2h} - variance in domain of stratum, \cr
-#'   \code{sup_cv} - Variable for maximum coeficient of variation, \cr
+#'   \code{sup_cv} - Variable for maximum coefficient of variation, \cr
 #'   \code{poph} - population size, \cr
 #'   \code{nh} - sample size .}
 
